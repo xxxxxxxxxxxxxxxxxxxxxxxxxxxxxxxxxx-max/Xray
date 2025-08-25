@@ -556,6 +556,7 @@
         let originalSize = 0;
         let compressedSize = 0;
         let stream = null;
+        let usingFrontCamera = false; // متغير لتتبع نوع الكاميرا المستخدمة
         
         // تهيئة التطبيق
         function initApp() {
@@ -586,6 +587,18 @@
             
             // تحديد أول عنصر افتراضيًا
             radioItems[0].classList.add('selected');
+            
+            // التحقق من دعم الكاميرا
+            checkCameraSupport();
+        }
+        
+        // التحقق من دعم الكاميرا
+        function checkCameraSupport() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                cameraBtn.disabled = true;
+                cameraBtn.title = "الكاميرا غير مدعومة في متصفحك";
+                showToast('الكاميرا غير مدعومة في متصفحك', 'error');
+            }
         }
         
         // معالجة اختيار الملف
@@ -658,14 +671,17 @@
                 cameraBtn.disabled = true;
                 cameraBtn.innerHTML = 'جاري فتح الكاميرا... <span class="button-icon">⏳</span>';
                 
-                stream = await navigator.mediaDevices.getUserMedia({ 
+                // استخدام الكاميرا الخلفية أولاً، إذا لم تكن متاحة استخدم الأمامية
+                const constraints = {
                     video: { 
-                        facingMode: 'environment', // استخدام الكاميرا الخلفية
+                        facingMode: usingFrontCamera ? 'user' : 'environment',
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     }, 
                     audio: false 
-                });
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
                 
                 video.srcObject = stream;
                 cameraPreview.style.display = 'block';
@@ -673,24 +689,44 @@
                 closeCameraBtn.style.display = 'block';
                 cameraBtn.style.display = 'none';
                 
+                // الانتظار حتى يتم تحميل بيانات الفيديو
+                video.onloadedmetadata = function() {
+                    // ضبط أبعاد canvas لتتناسب مع الفيديو
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                };
+                
                 cameraBtn.disabled = false;
                 cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
                 
             } catch (error) {
                 console.error('خطأ في الوصول إلى الكاميرا:', error);
-                showToast('تعذر الوصول إلى الكاميرا. يرجى التحقق من الأذونات.', 'error');
-                cameraBtn.disabled = false;
-                cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
+                
+                // محاولة استخدام الكاميرا الأمامية إذا فشلت الخلفية
+                if (!usingFrontCamera) {
+                    usingFrontCamera = true;
+                    showToast('جاري المحاولة مع الكاميرا الأمامية...', 'info');
+                    setTimeout(openCamera, 1000);
+                } else {
+                    showToast('تعذر الوصول إلى الكاميرا. يرجى التحقق من الأذونات.', 'error');
+                    cameraBtn.disabled = false;
+                    cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
+                }
             }
         }
         
         // التقاط صورة من الكاميرا
         function captureImage() {
             const context = canvas.getContext('2d');
+            
+            // ضمان أن أبعاد canvas مطابقة للفيديو
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
+            
+            // رسم الإطار الحالي من الفيديو على canvas
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
+            // تحويل canvas إلى صورة
             canvas.toBlob(function(blob) {
                 const file = new File([blob], `صورة_كاميرا_${new Date().toISOString().replace(/:/g, '-')}.jpg`, {
                     type: 'image/jpeg',
@@ -729,6 +765,9 @@
             captureBtn.style.display = 'none';
             retakeBtn.style.display = 'none';
             closeCameraBtn.style.display = 'none';
+            
+            // إعادة تعيين إلى الكاميرا الخلفية للمرة القادمة
+            usingFrontCamera = false;
         }
         
         // تقليص حجم الصورة
@@ -961,7 +1000,7 @@
         }
         
         // تهيئة التطبيق عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
