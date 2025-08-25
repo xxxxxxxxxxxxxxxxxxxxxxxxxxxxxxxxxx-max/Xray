@@ -13,6 +13,8 @@
             --lab-accent: #9b59b6;
             --light: #f0f7ff;
             --dark: #1a3c5a;
+            --success: #27ae60;
+            --warning: #f39c12;
         }
         
         * {
@@ -111,6 +113,28 @@
             display: none;
         }
         
+        .preview-container {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .compression-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f4ff;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+        
         .analysis-type {
             margin: 25px 0;
         }
@@ -172,24 +196,25 @@
             margin-left: 5px;
         }
         
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
         button {
-            width: 100%;
             padding: 15px;
-            background: var(--primary);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-        
-        button:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         button:disabled {
@@ -197,6 +222,51 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: #3d7ea6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .button-icon {
+            margin-left: 8px;
+            font-size: 18px;
         }
         
         #response {
@@ -220,6 +290,11 @@
         .response-title {
             font-weight: bold;
             color: var(--dark);
+        }
+        
+        .response-actions {
+            display: flex;
+            gap: 10px;
         }
         
         .analysis-content {
@@ -261,6 +336,25 @@
             to { transform: rotate(360deg); }
         }
         
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: var(--success);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
         footer {
             text-align: center;
             margin-top: 30px;
@@ -272,6 +366,10 @@
         
         @media (max-width: 768px) {
             .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
                 grid-template-columns: 1fr;
             }
             
@@ -289,7 +387,7 @@
     <div class="container">
         <header>
             <h1>نظام تحليل الصور الطبي من Hyper-Med</h1>
-            <p>قم بتحميل الصور الطبية أو نتائج التحاليل للحصول على تحليل مفصل باستخدام أحدث  </p>
+            <p>قم بتحميل الصور الطبية أو نتائج التحاليل للحصول على تحليل مفصل باستخدام أحدث تقنيات الذكاء الاصطناعي</p>
         </header>
         
         <div class="content">
@@ -302,6 +400,13 @@
                 </div>
                 
                 <div class="file-name" id="fileName"></div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h4>معاينة الصورة:</h4>
+                    <img id="imagePreview" alt="معاينة الصورة" />
+                </div>
+                
+                <div class="compression-info" id="compressionInfo"></div>
             </div>
             
             <div class="analysis-type">
@@ -330,11 +435,23 @@
                 </div>
             </div>
             
-            <button id="analyzeBtn">بدء التحليل</button>
+            <div class="action-buttons">
+                <button id="compressBtn" class="btn-warning" disabled>
+                    تقليص حجم الصورة <span class="button-icon">📁</span>
+                </button>
+                <button id="analyzeBtn" class="btn-primary" disabled>
+                    بدء التحليل <span class="button-icon">⚕️</span>
+                </button>
+            </div>
             
             <div id="response">
                 <div class="response-header">
                     <div class="response-title">نتيجة التحليل</div>
+                    <div class="response-actions">
+                        <button id="copyReportBtn" class="btn-success">
+                            نسخ التقرير <span class="button-icon">📋</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="analysis-content" id="analysisResult"></div>
             </div>
@@ -345,18 +462,29 @@
         </footer>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
         // عناصر DOM
         const fileInput = document.getElementById('fileInput');
         const uploadArea = document.getElementById('uploadArea');
         const fileName = document.getElementById('fileName');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const compressionInfo = document.getElementById('compressionInfo');
+        const compressBtn = document.getElementById('compressBtn');
         const analyzeBtn = document.getElementById('analyzeBtn');
         const response = document.getElementById('response');
         const analysisResult = document.getElementById('analysisResult');
+        const copyReportBtn = document.getElementById('copyReportBtn');
         const radioItems = document.querySelectorAll('.radio-item');
+        const toast = document.getElementById('toast');
         
         // متغيرات التطبيق
         let uploadedFile = null;
+        let compressedFile = null;
+        let originalSize = 0;
+        let compressedSize = 0;
         
         // تهيئة التطبيق
         function initApp() {
@@ -365,7 +493,9 @@
             uploadArea.addEventListener('dragover', handleDragOver);
             uploadArea.addEventListener('drop', handleDrop);
             uploadArea.addEventListener('click', () => fileInput.click());
+            compressBtn.addEventListener('click', compressImage);
             analyzeBtn.addEventListener('click', analyzeImage);
+            copyReportBtn.addEventListener('click', copyReport);
             
             // تحديد نوع التحليل
             radioItems.forEach(item => {
@@ -410,14 +540,33 @@
                 const validExtensions = ['jpg', 'jpeg', 'png', 'dicom', 'dcm', 'pdf'];
                 
                 if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
-                    alert('نوع الملف غير مدعوم. الرجاء تحميل صورة JPEG أو PNG أو DICOM أو PDF.');
+                    showToast('نوع الملف غير مدعوم. الرجاء تحميل صورة JPEG أو PNG أو DICOM أو PDF.', 'error');
                     return;
                 }
                 
                 uploadedFile = file;
-                fileName.textContent = `تم اختيار: ${file.name}`;
+                originalSize = file.size;
+                fileName.textContent = `تم اختيار: ${file.name} (${formatFileSize(file.size)})`;
                 fileName.style.display = 'block';
+                compressBtn.disabled = false;
                 analyzeBtn.disabled = false;
+                
+                // عرض معاينة للصورة إذا كانت صورة
+                if (file.type.includes('image') && !file.type.includes('dicom')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewContainer.style.display = 'none';
+                }
+                
+                // إخفاء معلومات الضغط السابقة
+                compressionInfo.style.display = 'none';
+                compressedFile = null;
+                compressedSize = 0;
             }
         }
         
@@ -426,15 +575,87 @@
             uploadArea.classList.remove('dragover');
         });
         
+        // تقليص حجم الصورة
+        function compressImage() {
+            if (!uploadedFile || !uploadedFile.type.includes('image')) {
+                showToast('تقليص الحجم متاح فقط لملفات الصور (JPEG, PNG)', 'error');
+                return;
+            }
+            
+            compressBtn.disabled = true;
+            compressBtn.innerHTML = 'جاري التقليص... <span class="button-icon">⏳</span>';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // تحديد الأبعاد الجديدة (تقليص إلى 80% من الحجم الأصلي)
+                    const maxWidth = img.width * 0.8;
+                    const maxHeight = img.height * 0.8;
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > maxWidth) {
+                        height = Math.round(height * maxWidth / width);
+                        width = maxWidth;
+                    }
+                    
+                    if (height > maxHeight) {
+                        width = Math.round(width * maxHeight / height);
+                        height = maxHeight;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // رسم الصورة على Canvas
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // تحويل إلى Blob بجودة مخفضة
+                    canvas.toBlob(function(blob) {
+                        compressedFile = new File([blob], uploadedFile.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        compressedSize = blob.size;
+                        const compressionRatio = Math.round((1 - (compressedSize / originalSize)) * 100);
+                        
+                        // عرض معلومات الضغط
+                        compressionInfo.innerHTML = `
+                            <strong>تم تقليص حجم الصورة:</strong><br>
+                            الحجم الأصلي: ${formatFileSize(originalSize)}<br>
+                            الحصر بعد الضغط: ${formatFileSize(compressedSize)}<br>
+                            نسبة التوفير: ${compressionRatio}%
+                        `;
+                        compressionInfo.style.display = 'block';
+                        
+                        // تحديث المعاينة
+                        imagePreview.src = URL.createObjectURL(blob);
+                        
+                        showToast(`تم تقليص حجم الصورة بنسبة ${compressionRatio}%`, 'success');
+                        
+                        compressBtn.disabled = false;
+                        compressBtn.innerHTML = 'تقليص حجم الصورة <span class="button-icon">📁</span>';
+                    }, 'image/jpeg', 0.7); // جودة 70%
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(uploadedFile);
+        }
+        
         // تحليل الصورة
         async function analyzeImage() {
             if (!uploadedFile) {
-                alert('يرجى اختيار ملف أولاً');
+                showToast('يرجى اختيار ملف أولاً', 'error');
                 return;
             }
 
             analyzeBtn.disabled = true;
-            analyzeBtn.textContent = 'جاري التحليل...';
+            analyzeBtn.innerHTML = 'جاري التحليل... <span class="button-icon">⏳</span>';
             response.style.display = 'block';
             
             // عرض مؤشر التحميل
@@ -449,31 +670,34 @@
                 // الحصول على نوع التحليل المحدد
                 const selectedAnalysis = document.querySelector('input[name="analysisType"]:checked').value;
                 
+                // استخدام الملف المضغوط إذا كان متاحاً، وإلا استخدم الملف الأصلي
+                const fileToUpload = compressedFile || uploadedFile;
+                
                 // رفع الملف إلى Puter
-                const fileExtension = uploadedFile.name.split('.').pop();
-                const puterFile = await puter.fs.write(`medical_data_${Date.now()}.${fileExtension}`, uploadedFile);
+                const fileExtension = fileToUpload.name.split('.').pop();
+                const puterFile = await puter.fs.write(`medical_data_${Date.now()}.${fileExtension}`, fileToUpload);
                 const uploadedPath = puterFile.path;
 
                 // إنشاء الـ prompt المناسب حسب نوع التحليل
                 let promptText = '';
                 
                 switch(selectedAnalysis) {
-    case 'xray':
-        promptText = 'حلل صورة الأشعة السينية التالية وكأنك أخصائي أشعة متمرس. اتبع خطوات دقيقة: (1) صف الصورة من الناحية التقنية وجودتها، (2) حدد البنى التشريحية المرئية، (3) اذكر أي علامات غير طبيعية مثل الكسور، التكلسات، التهابات، أو تشوهات، (4) قدّم استنتاجاً طبياً منظمًا، (5) أنهِ بتوصية سريرية مبدئية مع التنويه بأن القرار النهائي يعود للطبيب المعالج.';
-        break;
-    case 'ct':
-        promptText = 'قم بتحليل صورة الأشعة المقطعية بدقة وكأنك استشاري أشعة. اعمل بالخطوات: (1) صف نوعية الصورة والمستوى المقطعي، (2) حدد الهياكل الطبيعية، (3) ابحث عن أي أورام، نزيف، إصابات، أو تشوهات، (4) اربط الملاحظات بتفسير سريري، (5) اختم باستنتاج شامل وتوصية بمتابعة الحالة مع الطبيب المختص.';
-        break;
-    case 'mri':
-        promptText = 'حلل صورة الرنين المغناطيسي بعناية تامة كاختصاصي أشعة. التزم بالتالي: (1) صف جودة وتتابعات التصوير، (2) عرّف البنى الطبيعية المرئية، (3) ابحث عن علامات غير طبيعية مثل إصابات الأربطة، التهابات، أورام، أو تشوهات، (4) قدّم تفسيراً سريرياً واضحاً، (5) اختتم باستنتاج منظم مع توصية للمتابعة الطبية التخصصية.';
-        break;
-    case 'ecg':
-        promptText = 'قم بتحليل تخطيط القلب (ECG) بدقة كطبيب قلب. اتبع الخطوات: (1) تحقق من معدل النبض والإيقاع، (2) حلل الموجات P و QRS و T، (3) ابحث عن أي علامات لاضطراب نظم، احتشاء، تضخم، أو مشاكل توصيل كهربائي، (4) قدم استنتاجاً طبياً منظماً، (5) اختم بتوصية لمراجعة الطبيب المختص لتأكيد النتائج.';
-        break;
-    case 'lab':
-        promptText = 'قم بتحليل نتائج التحاليل المخبرية كطبيب مختبر متخصص. اتبع الآتي: (1) اعرض كل فحص وقيمته مقارنة بالمعدل المرجعي، (2) أبرز القيم غير الطبيعية، (3) فسّر الدلالات المحتملة للانحرافات (مثل فقر الدم، العدوى، خلل وظائف الكبد أو الكلى)، (4) اربط النتائج بسياق سريري محتمل، (5) اختم بتوصية واضحة بمراجعة الطبيب المعالج لتكامل التشخيص.';
-        break;
-}
+                    case 'xray':
+                        promptText = 'حلل صورة الأشعة السينية التالية وكأنك أخصائي أشعة متمرس. اتبع خطوات دقيقة: (1) صف الصورة من الناحية التقنية وجودتها، (2) حدد البنى التشريحية المرئية، (3) اذكر أي علامات غير طبيعية مثل الكسور، التكلسات، التهابات، أو تشوهات، (4) قدّم استنتاجاً طبياً منظمًا، (5) أنهِ بتوصية سريرية مبدئية مع التنويه بأن القرار النهائي يعود للطبيب المعالج.';
+                        break;
+                    case 'ct':
+                        promptText = 'قم بتحليل صورة الأشعة المقطعية بدقة وكأنك استشاري أشعة. اعمل بالخطوات: (1) صف نوعية الصورة والمستوى المقطعي، (2) حدد الهياكل الطبيعية، (3) ابحث عن أي أورام، نزيف، إصابات، أو تشوهات، (4) اربط الملاحظات بتفسير سريري، (5) اختم باستنتاج شامل وتوصية بمتابعة الحالة مع الطبيب المختص.';
+                        break;
+                    case 'mri':
+                        promptText = 'حلل صورة الرنين المغناطيسي بعناية تامة كاختصاصي أشعة. التزم بالتالي: (1) صف جودة وتتابعات التصوير، (2) عرّف البنى الطبيعية المرئية، (3) ابحث عن علامات غير طبيعية مثل إصابات الأربطة، التهابات، أورام، أو تشوهات، (4) قدّم تفسيراً سريرياً واضحاً، (5) اختتم باستنتاج منظم مع توصية للمتابعة الطبية التخصصية.';
+                        break;
+                    case 'ecg':
+                        promptText = 'قم بتحليل تخطيط القلب (ECG) بدقة كطبيب قلب. اتبع الخطوات: (1) تحقق من معدل النبض والإيقاع، (2) حلل الموجات P و QRS و T، (3) ابحث عن أي علامات لاضطراب نظم، احتشاء، تضخم، أو مشاكل توصيل كهربائي، (4) قدم استنتاجاً طبياً منظماً، (5) اختم بتوصية لمراجعة الطبيب المختص لتأكيد النتائج.';
+                        break;
+                    case 'lab':
+                        promptText = 'قم بتحليل نتائج التحاليل المخبرية كطبيب مختبر متخصص. اتبع الآتي: (1) اعرض كل فحص وقيمته مقارنة بالمعدل المرجعي، (2) أبرز القيم غير الطبيعية، (3) فسّر الدلالات المحتملة للانحرافات (مثل فقر الدم، العدوى، خلل وظائف الكبد أو الكلى)، (4) اربط النتائج بسياق سريري محتمل، (5) اختم بتوصية واضحة بمراجعة الطبيب المعالج لتكامل التشخيص.';
+                        break;
+                }
 
                 // تحليل البيانات باستخدام الذكاء الاصطناعي
                 const completion = await puter.ai.chat([
@@ -510,7 +734,20 @@
             }
 
             analyzeBtn.disabled = false;
-            analyzeBtn.textContent = 'بدء التحليل';
+            analyzeBtn.innerHTML = 'بدء التحليل <span class="button-icon">⚕️</span>';
+        }
+        
+        // نسخ التقرير
+        function copyReport() {
+            const reportText = analysisResult.innerText;
+            navigator.clipboard.writeText(reportText)
+                .then(() => {
+                    showToast('تم نسخ التقرير إلى الحافظة', 'success');
+                })
+                .catch(err => {
+                    showToast('فشل في نسخ التقرير', 'error');
+                    console.error('Failed to copy: ', err);
+                });
         }
         
         // تنسيق نص التحليل
@@ -547,6 +784,24 @@
             });
             
             return formattedHTML;
+        }
+        
+        // عرض رسالة toast
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--accent)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // تنسيق حجم الملف للعرض
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' بايت';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' كيلوبايت';
+            else return (bytes / 1048576).toFixed(2) + ' ميجابايت';
         }
         
         // تهيئة التطبيق عند تحميل الصفحة
