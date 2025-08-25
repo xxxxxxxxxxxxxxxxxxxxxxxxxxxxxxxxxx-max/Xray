@@ -196,6 +196,31 @@
             margin-left: 5px;
         }
         
+        .camera-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .camera-preview {
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+        }
+        
+        .camera-preview video,
+        .camera-preview canvas {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .camera-controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
         .action-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -260,6 +285,16 @@
         
         .btn-warning:hover {
             background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-info {
+            background: #3498db;
+        }
+        
+        .btn-info:hover {
+            background: #2980b9;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -380,6 +415,10 @@
             .content {
                 padding: 15px;
             }
+            
+            .camera-controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -407,6 +446,28 @@
                 </div>
                 
                 <div class="compression-info" id="compressionInfo"></div>
+            </div>
+            
+            <div class="camera-section">
+                <button id="cameraBtn" class="btn-info">
+                    فتح الكاميرا <span class="button-icon">📷</span>
+                </button>
+                
+                <div class="camera-preview" id="cameraPreview">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div class="camera-controls">
+                        <button id="captureBtn" class="btn-success" style="display: none;">
+                            التقاط صورة <span class="button-icon">📸</span>
+                        </button>
+                        <button id="retakeBtn" class="btn-warning" style="display: none;">
+                            إعادة التقاط <span class="button-icon">🔄</span>
+                        </button>
+                        <button id="closeCameraBtn" class="btn-secondary" style="display: none;">
+                            إغلاق الكاميرا <span class="button-icon">❌</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <div class="analysis-type">
@@ -480,11 +541,21 @@
         const radioItems = document.querySelectorAll('.radio-item');
         const toast = document.getElementById('toast');
         
+        // عناصر الكاميرا الجديدة
+        const cameraBtn = document.getElementById('cameraBtn');
+        const cameraPreview = document.getElementById('cameraPreview');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const closeCameraBtn = document.getElementById('closeCameraBtn');
+        
         // متغيرات التطبيق
         let uploadedFile = null;
         let compressedFile = null;
         let originalSize = 0;
         let compressedSize = 0;
+        let stream = null;
         
         // تهيئة التطبيق
         function initApp() {
@@ -496,6 +567,12 @@
             compressBtn.addEventListener('click', compressImage);
             analyzeBtn.addEventListener('click', analyzeImage);
             copyReportBtn.addEventListener('click', copyReport);
+            
+            // أحداث الكاميرا الجديدة
+            cameraBtn.addEventListener('click', openCamera);
+            captureBtn.addEventListener('click', captureImage);
+            retakeBtn.addEventListener('click', retakeImage);
+            closeCameraBtn.addEventListener('click', closeCamera);
             
             // تحديد نوع التحليل
             radioItems.forEach(item => {
@@ -574,6 +651,85 @@
         uploadArea.addEventListener('dragleave', () => {
             uploadArea.classList.remove('dragover');
         });
+        
+        // فتح الكاميرا
+        async function openCamera() {
+            try {
+                cameraBtn.disabled = true;
+                cameraBtn.innerHTML = 'جاري فتح الكاميرا... <span class="button-icon">⏳</span>';
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment', // استخدام الكاميرا الخلفية
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }, 
+                    audio: false 
+                });
+                
+                video.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                captureBtn.style.display = 'block';
+                closeCameraBtn.style.display = 'block';
+                cameraBtn.style.display = 'none';
+                
+                cameraBtn.disabled = false;
+                cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
+                
+            } catch (error) {
+                console.error('خطأ في الوصول إلى الكاميرا:', error);
+                showToast('تعذر الوصول إلى الكاميرا. يرجى التحقق من الأذونات.', 'error');
+                cameraBtn.disabled = false;
+                cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
+            }
+        }
+        
+        // التقاط صورة من الكاميرا
+        function captureImage() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob(function(blob) {
+                const file = new File([blob], `صورة_كاميرا_${new Date().toISOString().replace(/:/g, '-')}.jpg`, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+                
+                processFile(file);
+                
+                // إخفاء عناصر الكاميرا وإظهار زر إعادة التقاط
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'block';
+                video.style.display = 'none';
+                canvas.style.display = 'block';
+            }, 'image/jpeg', 0.9);
+        }
+        
+        // إعادة التقاط الصورة
+        function retakeImage() {
+            video.style.display = 'block';
+            canvas.style.display = 'none';
+            captureBtn.style.display = 'block';
+            retakeBtn.style.display = 'none';
+        }
+        
+        // إغلاق الكاميرا
+        function closeCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            cameraPreview.style.display = 'none';
+            cameraBtn.style.display = 'block';
+            video.style.display = 'block';
+            canvas.style.display = 'none';
+            captureBtn.style.display = 'none';
+            retakeBtn.style.display = 'none';
+            closeCameraBtn.style.display = 'none';
+        }
         
         // تقليص حجم الصورة
         function compressImage() {
