@@ -11,6 +11,7 @@
             --secondary: #4a8db7;
             --accent: #e74c3c;
             --lab-accent: #9b59b6;
+            --dermatology-accent: #e67e22;
             --light: #f0f7ff;
             --dark: #1a3c5a;
             --success: #27ae60;
@@ -146,14 +147,14 @@
             padding-bottom: 8px;
         }
         
-        .radio-group {
+        .list-view {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
         
-        .radio-item {
+        .list-item {
             background: var(--light);
             padding: 15px;
             border-radius: 8px;
@@ -161,64 +162,53 @@
             transition: all 0.2s ease;
             border: 2px solid transparent;
             position: relative;
+            display: flex;
+            align-items: center;
         }
         
-        .radio-item.xray {
-            border-left: 4px solid var(--secondary);
+        .list-item.xray {
+            border-right: 4px solid var(--secondary);
         }
         
-        .radio-item.ct {
-            border-left: 4px solid var(--accent);
+        .list-item.ct {
+            border-right: 4px solid var(--accent);
         }
         
-        .radio-item.mri {
-            border-left: 4px solid #2ecc71;
+        .list-item.mri {
+            border-right: 4px solid #2ecc71;
         }
         
-        .radio-item.ecg {
-            border-left: 4px solid #f39c12;
+        .list-item.ecg {
+            border-right: 4px solid #f39c12;
         }
         
-        .radio-item.lab {
-            border-left: 4px solid var(--lab-accent);
+        .list-item.lab {
+            border-right: 4px solid var(--lab-accent);
         }
         
-        .radio-item:hover {
+        .list-item.dermatology {
+            border-right: 4px solid var(--dermatology-accent);
+        }
+        
+        .list-item:hover {
             background: #e1f0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .radio-item.selected {
+        .list-item.selected {
             border-color: var(--secondary);
             background: #e1f0ff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .radio-item input {
-            margin-left: 5px;
+        .list-item input {
+            margin-left: 10px;
         }
         
-        .camera-section {
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .camera-preview {
-            margin-top: 15px;
-            display: none;
-            text-align: center;
-        }
-        
-        .camera-preview video,
-        .camera-preview canvas {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .camera-controls {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+        .list-item-icon {
+            margin-left: 10px;
+            font-size: 20px;
         }
         
         .action-buttons {
@@ -285,16 +275,6 @@
         
         .btn-warning:hover {
             background: #e67e22;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-info {
-            background: #3498db;
-        }
-        
-        .btn-info:hover {
-            background: #2980b9;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -400,7 +380,7 @@
         }
         
         @media (max-width: 768px) {
-            .radio-group {
+            .list-view {
                 grid-template-columns: 1fr;
             }
             
@@ -414,10 +394,6 @@
             
             .content {
                 padding: 15px;
-            }
-            
-            .camera-controls {
-                flex-direction: column;
             }
         }
     </style>
@@ -448,50 +424,38 @@
                 <div class="compression-info" id="compressionInfo"></div>
             </div>
             
-            <div class="camera-section">
-                <button id="cameraBtn" class="btn-info">
-                    فتح الكاميرا <span class="button-icon">📷</span>
-                </button>
-                
-                <div class="camera-preview" id="cameraPreview">
-                    <video id="video" autoplay playsinline></video>
-                    <canvas id="canvas" style="display: none;"></canvas>
-                    <div class="camera-controls">
-                        <button id="captureBtn" class="btn-success" style="display: none;">
-                            التقاط صورة <span class="button-icon">📸</span>
-                        </button>
-                        <button id="retakeBtn" class="btn-warning" style="display: none;">
-                            إعادة التقاط <span class="button-icon">🔄</span>
-                        </button>
-                        <button id="closeCameraBtn" class="btn-secondary" style="display: none;">
-                            إغلاق الكاميرا <span class="button-icon">❌</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
             <div class="analysis-type">
                 <h3>اختر نوع التحليل المطلوب:</h3>
-                <div class="radio-group">
-                    <label class="radio-item xray">
+                <div class="list-view">
+                    <label class="list-item xray">
                         <input type="radio" name="analysisType" value="xray" checked>
+                        <span class="list-item-icon">🦴</span>
                         أشعة X-Ray (عادية)
                     </label>
-                    <label class="radio-item ct">
+                    <label class="list-item ct">
                         <input type="radio" name="analysisType" value="ct">
+                        <span class="list-item-icon">🧠</span>
                         أشعة مقطعية (CT Scan)
                     </label>
-                    <label class="radio-item mri">
+                    <label class="list-item mri">
                         <input type="radio" name="analysisType" value="mri">
+                        <span class="list-item-icon">🔍</span>
                         رنين مغناطيسي (MRI)
                     </label>
-                    <label class="radio-item ecg">
+                    <label class="list-item ecg">
                         <input type="radio" name="analysisType" value="ecg">
+                        <span class="list-item-icon">❤️</span>
                         تخطيط القلب (ECG)
                     </label>
-                    <label class="radio-item lab">
+                    <label class="list-item lab">
                         <input type="radio" name="analysisType" value="lab">
+                        <span class="list-item-icon">🧪</span>
                         تحاليل مخبرية
+                    </label>
+                    <label class="list-item dermatology">
+                        <input type="radio" name="analysisType" value="dermatology">
+                        <span class="list-item-icon">🔬</span>
+                        أمراض جلدية
                     </label>
                 </div>
             </div>
@@ -538,25 +502,14 @@
         const response = document.getElementById('response');
         const analysisResult = document.getElementById('analysisResult');
         const copyReportBtn = document.getElementById('copyReportBtn');
-        const radioItems = document.querySelectorAll('.radio-item');
+        const listItems = document.querySelectorAll('.list-item');
         const toast = document.getElementById('toast');
-        
-        // عناصر الكاميرا الجديدة
-        const cameraBtn = document.getElementById('cameraBtn');
-        const cameraPreview = document.getElementById('cameraPreview');
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureBtn = document.getElementById('captureBtn');
-        const retakeBtn = document.getElementById('retakeBtn');
-        const closeCameraBtn = document.getElementById('closeCameraBtn');
         
         // متغيرات التطبيق
         let uploadedFile = null;
         let compressedFile = null;
         let originalSize = 0;
         let compressedSize = 0;
-        let stream = null;
-        let usingFrontCamera = false; // متغير لتتبع نوع الكاميرا المستخدمة
         
         // تهيئة التطبيق
         function initApp() {
@@ -569,16 +522,10 @@
             analyzeBtn.addEventListener('click', analyzeImage);
             copyReportBtn.addEventListener('click', copyReport);
             
-            // أحداث الكاميرا الجديدة
-            cameraBtn.addEventListener('click', openCamera);
-            captureBtn.addEventListener('click', captureImage);
-            retakeBtn.addEventListener('click', retakeImage);
-            closeCameraBtn.addEventListener('click', closeCamera);
-            
             // تحديد نوع التحليل
-            radioItems.forEach(item => {
+            listItems.forEach(item => {
                 item.addEventListener('click', () => {
-                    radioItems.forEach(i => i.classList.remove('selected'));
+                    listItems.forEach(i => i.classList.remove('selected'));
                     item.classList.add('selected');
                     const radioInput = item.querySelector('input');
                     radioInput.checked = true;
@@ -586,19 +533,7 @@
             });
             
             // تحديد أول عنصر افتراضيًا
-            radioItems[0].classList.add('selected');
-            
-            // التحقق من دعم الكاميرا
-            checkCameraSupport();
-        }
-        
-        // التحقق من دعم الكاميرا
-        function checkCameraSupport() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                cameraBtn.disabled = true;
-                cameraBtn.title = "الكاميرا غير مدعومة في متصفحك";
-                showToast('الكاميرا غير مدعومة في متصفحك', 'error');
-            }
+            listItems[0].classList.add('selected');
         }
         
         // معالجة اختيار الملف
@@ -664,111 +599,6 @@
         uploadArea.addEventListener('dragleave', () => {
             uploadArea.classList.remove('dragover');
         });
-        
-        // فتح الكاميرا
-        async function openCamera() {
-            try {
-                cameraBtn.disabled = true;
-                cameraBtn.innerHTML = 'جاري فتح الكاميرا... <span class="button-icon">⏳</span>';
-                
-                // استخدام الكاميرا الخلفية أولاً، إذا لم تكن متاحة استخدم الأمامية
-                const constraints = {
-                    video: { 
-                        facingMode: usingFrontCamera ? 'user' : 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }, 
-                    audio: false 
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                
-                video.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                captureBtn.style.display = 'block';
-                closeCameraBtn.style.display = 'block';
-                cameraBtn.style.display = 'none';
-                
-                // الانتظار حتى يتم تحميل بيانات الفيديو
-                video.onloadedmetadata = function() {
-                    // ضبط أبعاد canvas لتتناسب مع الفيديو
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                };
-                
-                cameraBtn.disabled = false;
-                cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
-                
-            } catch (error) {
-                console.error('خطأ في الوصول إلى الكاميرا:', error);
-                
-                // محاولة استخدام الكاميرا الأمامية إذا فشلت الخلفية
-                if (!usingFrontCamera) {
-                    usingFrontCamera = true;
-                    showToast('جاري المحاولة مع الكاميرا الأمامية...', 'info');
-                    setTimeout(openCamera, 1000);
-                } else {
-                    showToast('تعذر الوصول إلى الكاميرا. يرجى التحقق من الأذونات.', 'error');
-                    cameraBtn.disabled = false;
-                    cameraBtn.innerHTML = 'فتح الكاميرا <span class="button-icon">📷</span>';
-                }
-            }
-        }
-        
-        // التقاط صورة من الكاميرا
-        function captureImage() {
-            const context = canvas.getContext('2d');
-            
-            // ضمان أن أبعاد canvas مطابقة للفيديو
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // رسم الإطار الحالي من الفيديو على canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // تحويل canvas إلى صورة
-            canvas.toBlob(function(blob) {
-                const file = new File([blob], `صورة_كاميرا_${new Date().toISOString().replace(/:/g, '-')}.jpg`, {
-                    type: 'image/jpeg',
-                    lastModified: Date.now()
-                });
-                
-                processFile(file);
-                
-                // إخفاء عناصر الكاميرا وإظهار زر إعادة التقاط
-                captureBtn.style.display = 'none';
-                retakeBtn.style.display = 'block';
-                video.style.display = 'none';
-                canvas.style.display = 'block';
-            }, 'image/jpeg', 0.9);
-        }
-        
-        // إعادة التقاط الصورة
-        function retakeImage() {
-            video.style.display = 'block';
-            canvas.style.display = 'none';
-            captureBtn.style.display = 'block';
-            retakeBtn.style.display = 'none';
-        }
-        
-        // إغلاق الكاميرا
-        function closeCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            
-            cameraPreview.style.display = 'none';
-            cameraBtn.style.display = 'block';
-            video.style.display = 'block';
-            canvas.style.display = 'none';
-            captureBtn.style.display = 'none';
-            retakeBtn.style.display = 'none';
-            closeCameraBtn.style.display = 'none';
-            
-            // إعادة تعيين إلى الكاميرا الخلفية للمرة القادمة
-            usingFrontCamera = false;
-        }
         
         // تقليص حجم الصورة
         function compressImage() {
@@ -892,6 +722,9 @@
                     case 'lab':
                         promptText = 'قم بتحليل نتائج التحاليل المخبرية كطبيب مختبر متخصص. اتبع الآتي: (1) اعرض كل فحص وقيمته مقارنة بالمعدل المرجعي، (2) أبرز القيم غير الطبيعية، (3) فسّر الدلالات المحتملة للانحرافات (مثل فقر الدم، العدوى، خلل وظائف الكبد أو الكلى)، (4) اربط النتائج بسياق سريري محتمل، (5) اختم بتوصية واضحة بمراجعة الطبيب المعالج لتكامل التشخيص.';
                         break;
+                    case 'dermatology':
+                        promptText = 'حلل الصورة الجلدية المقدمة كطبيب أمراض جلدية متخصص. اتبع الخطوات التالية: (1) صف الآفة الجلدية من حيث الشكل، اللون، الحجم، والتوزيع، (2) حدد إن كانت الآفة أولية أو ثانوية، (3) اذكر التشخيص التفريقي المحتمل، (4) اقترح الفحوصات الإضافية اللازمة إن وجدت، (5) قدم توصيات علاجية أولية مع التأكيد على ضرورة مراجعة الطبيب المختص للتشخيص والعلاج النهائي.';
+                        break;
                 }
 
                 // تحليل البيانات باستخدام الذكاء الاصطناعي
@@ -1000,7 +833,7 @@
         }
         
         // تهيئة التطبيق عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
