@@ -91,7 +91,7 @@
       <div class="result-card" id="card-meta"></div>
       <div class="result-card" id="card-findings"></div>
       <div class="result-card" id="card-differential"></div>
-      <button class="print-btn" onclick="window.print()">🖨️ طباعة / تصدير PDF</button>
+      <button class="print-btn" onclick="sendScreenshotToTelegram()">📸 إرسال كصورة للتليجرام</button>
     </div>
   </div>
 
@@ -211,5 +211,58 @@
       else return(bytes/1048576).toFixed(2)+' ميجابايت';
     }
   </script>
+
+<!-- مكتبة html2canvas لتصوير التقرير -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+  async function sendScreenshotToTelegram() {
+    try {
+      const element = document.getElementById("response");
+      if (!element.classList.contains("show")) {
+        alert("⚠️ لا يوجد تقرير لعرضه أو إرساله");
+        return;
+      }
+
+      // تصوير العنصر وتحويله لصورة
+      const canvas = await html2canvas(element, { scale: 2 });
+      const dataUrl = canvas.toDataURL("image/png");
+      const blob = await (await fetch(dataUrl)).blob();
+
+      // بيانات المستخدم من Mini App
+      const tg = window.Telegram.WebApp;
+      const chatId = tg.initDataUnsafe?.user?.id;
+      const botToken = "7874836044:AAFKGK4J4E5PLWH7NnQ1VfjMbaJFCzSvOJ0";
+
+      if (!chatId) {
+        alert("⚠️ لم يتم الحصول على معرف المستخدم من تليجرام");
+        return;
+      }
+
+      // تجهيز البيانات للإرسال
+      const formData = new FormData();
+      formData.append("chat_id", chatId);
+      formData.append("photo", blob, "report.png");
+
+      // إرسال الصورة إلى البوت
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendPhoto`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        alert("📤 تم إرسال التقرير كصورة على التليجرام");
+      } else {
+        alert("⚠️ فشل الإرسال إلى البوت");
+      }
+    } catch (err) {
+      console.error("خطأ أثناء الإرسال:", err);
+      alert("⚠️ حدث خطأ أثناء إرسال التقرير");
+    }
+  }
+</script>
 </body>
 </html>
