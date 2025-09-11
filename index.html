@@ -1,839 +1,215 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام تحليل الصور الطبي من Hyper-Med</title>
-    <script src="https://js.puter.com/v2/"></script>
-    <style>
-        :root {
-            --primary: #2b5f87;
-            --secondary: #4a8db7;
-            --accent: #e74c3c;
-            --lab-accent: #9b59b6;
-            --dermatology-accent: #e67e22;
-            --light: #f0f7ff;
-            --dark: #1a3c5a;
-            --success: #27ae60;
-            --warning: #f39c12;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-        
-        header h1 {
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 25px;
-        }
-        
-        .upload-section {
-            margin-bottom: 30px;
-        }
-        
-        .upload-area {
-            border: 3px dashed #ccc;
-            border-radius: 10px;
-            padding: 40px 20px;
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--light);
-        }
-        
-        .upload-area:hover {
-            border-color: var(--secondary);
-            background: #e8f4ff;
-        }
-        
-        .upload-area.dragover {
-            border-color: var(--secondary);
-            background: #e8f4ff;
-            transform: scale(1.02);
-        }
-        
-        .upload-icon {
-            font-size: 50px;
-            color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        
-        input[type="file"] {
-            display: none;
-        }
-        
-        .file-types {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .file-name {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
-            display: none;
-        }
-        
-        .preview-container {
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-        
-        .preview-container img {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .compression-info {
-            margin-top: 10px;
-            padding: 10px;
-            background: #e8f4ff;
-            border-radius: 5px;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .analysis-type {
-            margin: 25px 0;
-        }
-        
-        .analysis-type h3 {
-            margin-bottom: 15px;
-            color: var(--dark);
-            border-bottom: 2px solid var(--secondary);
-            padding-bottom: 8px;
-        }
-        
-        .list-view {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .list-item {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .list-item.xray {
-            border-right: 4px solid var(--secondary);
-        }
-        
-        .list-item.ct {
-            border-right: 4px solid var(--accent);
-        }
-        
-        .list-item.mri {
-            border-right: 4px solid #2ecc71;
-        }
-        
-        .list-item.ecg {
-            border-right: 4px solid #f39c12;
-        }
-        
-        .list-item.lab {
-            border-right: 4px solid var(--lab-accent);
-        }
-        
-        .list-item.dermatology {
-            border-right: 4px solid var(--dermatology-accent);
-        }
-        
-        .list-item:hover {
-            background: #e1f0ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .list-item.selected {
-            border-color: var(--secondary);
-            background: #e1f0ff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .list-item input {
-            margin-left: 10px;
-        }
-        
-        .list-item-icon {
-            margin-left: 10px;
-            font-size: 20px;
-        }
-        
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        button {
-            padding: 15px;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-        }
-        
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-secondary {
-            background: var(--secondary);
-        }
-        
-        .btn-secondary:hover {
-            background: #3d7ea6;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-success {
-            background: var(--success);
-        }
-        
-        .btn-success:hover {
-            background: #219653;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-warning {
-            background: var(--warning);
-        }
-        
-        .btn-warning:hover {
-            background: #e67e22;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .button-icon {
-            margin-left: 8px;
-            font-size: 18px;
-        }
-        
-        #response {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            display: none;
-            border-right: 5px solid var(--secondary);
-        }
-        
-        .response-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .response-title {
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .response-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .analysis-content {
-            line-height: 1.8;
-        }
-        
-        .analysis-content h4 {
-            margin: 15px 0 8px 0;
-            color: var(--primary);
-        }
-        
-        .analysis-content ul {
-            padding-right: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .analysis-content li {
-            margin-bottom: 5px;
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--secondary);
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 15px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: var(--success);
-            color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .toast.show {
-            opacity: 1;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
-            border-top: 1px solid #eee;
-        }
-        
-        @media (max-width: 768px) {
-            .list-view {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-buttons {
-                grid-template-columns: 1fr;
-            }
-            
-            header h1 {
-                font-size: 24px;
-            }
-            
-            .content {
-                padding: 15px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام تحليل الصور الطبي - Hyper-Med</title>
+  <script src="https://js.puter.com/v2/"></script>
+  <style>
+    body {font-family: 'Cairo', sans-serif; background:#f4f7fb; margin:0; color:#333;}
+    header {background:linear-gradient(135deg,#2b5f87,#3f88c5); color:white; padding:25px; text-align:center;}
+    header h1{margin:0; font-size:26px; font-weight:700;}
+    header p{margin:8px 0 0; font-size:15px; opacity:.9;}
+
+    .container {max-width:1000px; margin:30px auto; padding:0 15px;}
+    .card {background:white; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.08); padding:25px; margin-bottom:20px; transition:all .3s ease;}
+    .card:hover{box-shadow:0 10px 30px rgba(0,0,0,.12);}
+
+    .upload-area{border:2px dashed #b3cce6; border-radius:12px; padding:40px; text-align:center; cursor:pointer; background:#f9fcff; transition:all .2s ease;}
+    .upload-area:hover{background:#eef6ff; border-color:#3f88c5;}
+    .upload-area.dragover{background:#dcefff; border-color:#2b5f87;}
+    input[type=file]{display:none;}
+
+    .file-name{margin-top:15px; font-weight:bold; color:#444; text-align:center;}
+    .preview-container{margin-top:20px; text-align:center;}
+    .preview-container img{max-width:100%; max-height:280px; border-radius:12px; border:1px solid #eee;}
+    .compression-info{margin-top:15px; text-align:center; background:#f8fafc; padding:10px; border-radius:8px; font-size:14px; color:#555;}
+
+    input[type=text], select {padding:12px; font-size:15px; border-radius:8px; border:1px solid #bbb; width:100%; max-width:500px; margin-top:10px;}
+    button{padding:14px 22px; border:none; border-radius:10px; color:white; font-weight:600; font-size:16px; cursor:pointer; transition:all .2s ease;}
+    .btn-primary{background:#2b5f87;}
+    .btn-primary:hover{background:#3f88c5;}
+
+    #response{margin-top:25px; display:none;}
+    #response.show{display:block;}
+
+    .result-card {background:white; border-radius:12px; padding:20px; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,.05);}
+    .result-card h3{margin-top:0; color:#2b5f87; font-size:18px; margin-bottom:10px;}
+
+    .print-btn {background:#27ae60; margin-top:15px;}
+    .print-btn:hover{background:#2ecc71;}
+
+    @media print {
+      body {background:white;}
+      header, .card, .upload-area, #reasonInput, #examTypeSelect, #analyzeBtn, .print-btn, .file-name, .preview-container, .compression-info {display:none !important;}
+      #response {display:block !important; box-shadow:none; margin:0; padding:0;}
+      #response .result-card {box-shadow:none; border:none; margin:0; padding:10px 0;}
+      #response:before {content:"التحليل\a\a"; white-space:pre; font-size:20px; font-weight:bold;}
+    }
+
+    @media (max-width:600px){
+      header h1{font-size:22px;}
+      .card{padding:18px;}
+      button{width:100%;}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>نظام تحليل الصور الطبي من Hyper-Med</h1>
-            <p>قم بتحميل الصور الطبية أو نتائج التحاليل للحصول على تحليل مفصل باستخدام أحدث تقنيات الذكاء الاصطناعي</p>
-        </header>
-        
-        <div class="content">
-            <div class="upload-section">
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📁</div>
-                    <p>انقر لتحميل الصورة أو اسحبها وأفلتها هنا</p>
-                    <p class="file-types">(JPEG, PNG, DICOM, PDF)</p>
-                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.dicom,.dcm,.pdf" />
-                </div>
-                
-                <div class="file-name" id="fileName"></div>
-                
-                <div class="preview-container" id="previewContainer">
-                    <h4>معاينة الصورة:</h4>
-                    <img id="imagePreview" alt="معاينة الصورة" />
-                </div>
-                
-                <div class="compression-info" id="compressionInfo"></div>
-            </div>
-            
-            <div class="analysis-type">
-                <h3>اختر نوع التحليل المطلوب:</h3>
-                <div class="list-view">
-                    <label class="list-item xray">
-                        <input type="radio" name="analysisType" value="xray" checked>
-                        <span class="list-item-icon">🦴</span>
-                        أشعة X-Ray (عادية)
-                    </label>
-                    <label class="list-item ct">
-                        <input type="radio" name="analysisType" value="ct">
-                        <span class="list-item-icon">🧠</span>
-                        أشعة مقطعية (CT Scan)
-                    </label>
-                    <label class="list-item mri">
-                        <input type="radio" name="analysisType" value="mri">
-                        <span class="list-item-icon">🔍</span>
-                        رنين مغناطيسي (MRI)
-                    </label>
-                    <label class="list-item ecg">
-                        <input type="radio" name="analysisType" value="ecg">
-                        <span class="list-item-icon">❤️</span>
-                        تخطيط القلب (ECG)
-                    </label>
-                    <label class="list-item lab">
-                        <input type="radio" name="analysisType" value="lab">
-                        <span class="list-item-icon">🧪</span>
-                        تحاليل مخبرية
-                    </label>
-                    <label class="list-item dermatology">
-                        <input type="radio" name="analysisType" value="dermatology">
-                        <span class="list-item-icon">🔬</span>
-                        أمراض جلدية
-                    </label>
-                </div>
-            </div>
-            
-            <div class="action-buttons">
-                <button id="compressBtn" class="btn-warning" disabled>
-                    تقليص حجم الصورة <span class="button-icon">📁</span>
-                </button>
-                <button id="analyzeBtn" class="btn-primary" disabled>
-                    بدء التحليل <span class="button-icon">⚕️</span>
-                </button>
-            </div>
-            
-            <div id="response">
-                <div class="response-header">
-                    <div class="response-title">نتيجة التحليل</div>
-                    <div class="response-actions">
-                        <button id="copyReportBtn" class="btn-success">
-                            نسخ التقرير <span class="button-icon">📋</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="analysis-content" id="analysisResult"></div>
-            </div>
-        </div>
-        
-        <footer>
-            <p>هذا النظام مصمم للمساعدة في التحليل الأولي ولا يغني عن استشارة الطبيب المتخصص</p>
-        </footer>
+  <header>
+    <h1>نظام تحليل الصور الطبي</h1>
+    <p>قم بتحميل الملفات الطبية، أدخل نوع الفحص وسبب الفحص، لتحصل على تقرير موجز ومنظم</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="upload-area" id="uploadArea">
+        <p>📂 انقر لتحميل الملف أو اسحبه هنا</p>
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.dcm" />
+      </div>
+      <div class="file-name" id="fileName"></div>
+      <div class="preview-container" id="previewContainer"><img id="imagePreview" /></div>
+      <div class="compression-info" id="compressionInfo"></div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <div class="card">
+      <h3>✍️ أدخل تفاصيل الفحص:</h3>
+      <select id="examTypeSelect">
+        <option value="">اختر نوع الفحص</option>
+        <option value="X-ray">X-ray</option>
+        <option value="MRI">MRI</option>
+        <option value="CT">CT</option>
+        <option value="ECG">ECG</option>
+        <option value="Laboratory test">Laboratory test</option>
+      </select>
+      <input type="text" id="reasonInput" placeholder="سبب الفحص (مثال: ضيق نفس حاد)">
+      <div style="margin-top:20px;">
+        <button id="analyzeBtn" class="btn-primary" disabled>🚀 بدء التحليل</button>
+      </div>
+    </div>
 
-    <script>
-        // عناصر DOM
-        const fileInput = document.getElementById('fileInput');
-        const uploadArea = document.getElementById('uploadArea');
-        const fileName = document.getElementById('fileName');
-        const previewContainer = document.getElementById('previewContainer');
-        const imagePreview = document.getElementById('imagePreview');
-        const compressionInfo = document.getElementById('compressionInfo');
-        const compressBtn = document.getElementById('compressBtn');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const response = document.getElementById('response');
-        const analysisResult = document.getElementById('analysisResult');
-        const copyReportBtn = document.getElementById('copyReportBtn');
-        const listItems = document.querySelectorAll('.list-item');
-        const toast = document.getElementById('toast');
-        
-        // متغيرات التطبيق
-        let uploadedFile = null;
-        let compressedFile = null;
-        let originalSize = 0;
-        let compressedSize = 0;
-        
-        // تهيئة التطبيق
-        function initApp() {
-            // إضافة مستمعي الأحداث
-            fileInput.addEventListener('change', handleFileSelect);
-            uploadArea.addEventListener('dragover', handleDragOver);
-            uploadArea.addEventListener('drop', handleDrop);
-            uploadArea.addEventListener('click', () => fileInput.click());
-            compressBtn.addEventListener('click', compressImage);
-            analyzeBtn.addEventListener('click', analyzeImage);
-            copyReportBtn.addEventListener('click', copyReport);
-            
-            // تحديد نوع التحليل
-            listItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    listItems.forEach(i => i.classList.remove('selected'));
-                    item.classList.add('selected');
-                    const radioInput = item.querySelector('input');
-                    radioInput.checked = true;
-                });
-            });
-            
-            // تحديد أول عنصر افتراضيًا
-            listItems[0].classList.add('selected');
-        }
-        
-        // معالجة اختيار الملف
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            processFile(file);
-        }
-        
-        // معالجة سحب الملف وإفلاته
-        function handleDragOver(e) {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        }
-        
-        function handleDrop(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            
-            const file = e.dataTransfer.files[0];
-            processFile(file);
-        }
-        
-        // معالجة الملف بعد اختياره
-        function processFile(file) {
-            if (file) {
-                // التحقق من نوع الملف
-                const validTypes = ['image/jpeg', 'image/png', 'application/dicom', 'application/pdf'];
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-                const validExtensions = ['jpg', 'jpeg', 'png', 'dicom', 'dcm', 'pdf'];
-                
-                if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
-                    showToast('نوع الملف غير مدعوم. الرجاء تحميل صورة JPEG أو PNG أو DICOM أو PDF.', 'error');
-                    return;
-                }
-                
-                uploadedFile = file;
-                originalSize = file.size;
-                fileName.textContent = `تم اختيار: ${file.name} (${formatFileSize(file.size)})`;
-                fileName.style.display = 'block';
-                compressBtn.disabled = false;
-                analyzeBtn.disabled = false;
-                
-                // عرض معاينة للصورة إذا كانت صورة
-                if (file.type.includes('image') && !file.type.includes('dicom')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
-                        previewContainer.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    previewContainer.style.display = 'none';
-                }
-                
-                // إخفاء معلومات الضغط السابقة
-                compressionInfo.style.display = 'none';
-                compressedFile = null;
-                compressedSize = 0;
-            }
-        }
-        
-        // إزالة تأثير السحب عند مغادرة المنطقة
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-        
-        // تقليص حجم الصورة
-        function compressImage() {
-            if (!uploadedFile || !uploadedFile.type.includes('image')) {
-                showToast('تقليص الحجم متاح فقط لملفات الصور (JPEG, PNG)', 'error');
-                return;
-            }
-            
-            compressBtn.disabled = true;
-            compressBtn.innerHTML = 'جاري التقليص... <span class="button-icon">⏳</span>';
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // تحديد الأبعاد الجديدة (تقليص إلى 80% من الحجم الأصلي)
-                    const maxWidth = img.width * 0.8;
-                    const maxHeight = img.height * 0.8;
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    if (width > maxWidth) {
-                        height = Math.round(height * maxWidth / width);
-                        width = maxWidth;
-                    }
-                    
-                    if (height > maxHeight) {
-                        width = Math.round(width * maxHeight / height);
-                        height = maxHeight;
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    
-                    // رسم الصورة على Canvas
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // تحويل إلى Blob بجودة مخفضة
-                    canvas.toBlob(function(blob) {
-                        compressedFile = new File([blob], uploadedFile.name, {
-                            type: 'image/jpeg',
-                            lastModified: Date.now()
-                        });
-                        
-                        compressedSize = blob.size;
-                        const compressionRatio = Math.round((1 - (compressedSize / originalSize)) * 100);
-                        
-                        // عرض معلومات الضغط
-                        compressionInfo.innerHTML = `
-                            <strong>تم تقليص حجم الصورة:</strong><br>
-                            الحجم الأصلي: ${formatFileSize(originalSize)}<br>
-                            الحصر بعد الضغط: ${formatFileSize(compressedSize)}<br>
-                            نسبة التوفير: ${compressionRatio}%
-                        `;
-                        compressionInfo.style.display = 'block';
-                        
-                        // تحديث المعاينة
-                        imagePreview.src = URL.createObjectURL(blob);
-                        
-                        showToast(`تم تقليص حجم الصورة بنسبة ${compressionRatio}%`, 'success');
-                        
-                        compressBtn.disabled = false;
-                        compressBtn.innerHTML = 'تقليص حجم الصورة <span class="button-icon">📁</span>';
-                    }, 'image/jpeg', 0.7); // جودة 70%
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(uploadedFile);
-        }
-        
-        // تحليل الصورة
-        async function analyzeImage() {
-            if (!uploadedFile) {
-                showToast('يرجى اختيار ملف أولاً', 'error');
-                return;
-            }
+    <div id="response">
+      <div class="result-card" id="card-meta"></div>
+      <div class="result-card" id="card-findings"></div>
+      <div class="result-card" id="card-differential"></div>
+      <button class="print-btn" onclick="window.print()">🖨️ طباعة / تصدير PDF</button>
+    </div>
+  </div>
 
-            analyzeBtn.disabled = true;
-            analyzeBtn.innerHTML = 'جاري التحليل... <span class="button-icon">⏳</span>';
-            response.style.display = 'block';
-            
-            // عرض مؤشر التحميل
-            analysisResult.innerHTML = `
-                <div class="loading">
-                    <span>جاري معالجة البيانات وتحليلها...</span>
-                    <div class="spinner"></div>
-                </div>
-            `;
+  <script>
+    const fileInput=document.getElementById('fileInput');
+    const uploadArea=document.getElementById('uploadArea');
+    const fileName=document.getElementById('fileName');
+    const previewContainer=document.getElementById('previewContainer');
+    const imagePreview=document.getElementById('imagePreview');
+    const compressionInfo=document.getElementById('compressionInfo');
+    const analyzeBtn=document.getElementById('analyzeBtn');
+    const response=document.getElementById('response');
+    const cardMeta=document.getElementById('card-meta');
+    const cardFindings=document.getElementById('card-findings');
+    const cardDifferential=document.getElementById('card-differential');
+    const reasonInput=document.getElementById('reasonInput');
+    const examTypeSelect=document.getElementById('examTypeSelect');
 
-            try {
-                // الحصول على نوع التحليل المحدد
-                const selectedAnalysis = document.querySelector('input[name="analysisType"]:checked').value;
-                
-                // استخدام الملف المضغوط إذا كان متاحاً، وإلا استخدم الملف الأصلي
-                const fileToUpload = compressedFile || uploadedFile;
-                
-                // رفع الملف إلى Puter
-                const fileExtension = fileToUpload.name.split('.').pop();
-                const puterFile = await puter.fs.write(`medical_data_${Date.now()}.${fileExtension}`, fileToUpload);
-                const uploadedPath = puterFile.path;
+    let uploadedFile=null, compressedFile=null, originalSize=0, compressedSize=0;
 
-                // إنشاء الـ prompt المناسب حسب نوع التحليل
-                let promptText = '';
-                
-                switch(selectedAnalysis) {
-                    case 'xray':
-                        promptText = 'مرحبا انت طبيب اشعة اريد منك مايلي: 1-تحديد نوع الصورة تلشعاعية. 2-تحديد وذكر التغيرات الشعاعية كطبيب شعاعية بملهص قصير ا 3-تحديد التغيرات المرضية رتب المطلوب حسب 1و 2 و 3‎';
-                        break;
-                    case 'ct':
-                        promptText = 'قم بتحليل صورة الأشعة المقطعية بدقة وكأنك استشاري أشعة. اعمل بالخطوات: (1) صف نوعية الصورة والمستوى المقطعي، (2) حدد.';
-                        break;
-                    case 'mri':
-                        promptText = 'حلل صورة الرنين المغناطيسي بعناية تامة كاختصاصي أشعة. التزم بالتالي: (1) صف جودة وتتابعات التصوير، (2) عرّف البنى الطبيعية المرئية، (3) ابحث عن علامات غير طبيعية مثل إصابات الأربطة، التهابات، أورام، أو تشوهات، (4) قدّم تفسيراً سريرياً واضحاً، (5) اختتم باستنتاج منظم مع توصية للمتابعة الطبية التخصصية.';
-                        break;
-                    case 'ecg':
-                        promptText = 'قم بتحليل تخطيط القلب (ECG) بدقة كطبيب قلب. اتبع الخطوات: (1) تحقق من معدل النبض والإيقاع، (2) حلل الموجات P و QRS و T، (3) ابحث عن أي علامات لاضطراب نظم، احتشاء، تضخم، أو مشاكل توصيل كهربائي، (4) قدم استنتاجاً طبياً منظماً، (5) اختم بتوصية لمراجعة الطبيب المختص لتأكيد النتائج.';
-                        break;
-                    case 'lab':
-                        promptText = 'قم بتحليل نتائج التحاليل المخبرية كطبيب مختبر متخصص. اتبع الآتي: (1) اعرض كل فحص وقيمته مقارنة بالمعدل المرجعي، (2) أبرز القيم غير الطبيعية، (3) فسّر الدلالات المحتملة للانحرافات (مثل فقر الدم، العدوى، خلل وظائف الكبد أو الكلى)، (4) اربط النتائج بسياق سريري محتمل، (5) اختم بتوصية واضحة بمراجعة الطبيب المعالج لتكامل التشخيص.';
-                        break;
-                    case 'dermatology':
-                        promptText = 'حلل الصورة الجلدية المقدمة كطبيب أمراض جلدية متخصص. اتبع الخطوات التالية: (1) صف الآفة الجلدية من حيث الشكل، اللون، الحجم، والتوزيع، (2) حدد إن كانت الآفة أولية أو ثانوية، (3) اذكر التشخيص التفريقي المحتمل، (4) اقترح الفحوصات الإضافية اللازمة إن وجدت، (5) قدم توصيات علاجية أولية مع التأكيد على ضرورة مراجعة الطبيب المختص للتشخيص والعلاج النهائي.';
-                        break;
-                }
+    uploadArea.addEventListener('click',()=>fileInput.click());
+    uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.classList.add('dragover');});
+    uploadArea.addEventListener('dragleave',()=>uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop',e=>{e.preventDefault();uploadArea.classList.remove('dragover');processFile(e.dataTransfer.files[0]);});
+    fileInput.addEventListener('change',e=>processFile(e.target.files[0]));
 
-                // تحليل البيانات باستخدام الذكاء الاصطناعي
-                const completion = await puter.ai.chat([
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'file',
-                                puter_path: uploadedPath
-                            },
-                            {
-                                type: 'text',
-                                text: promptText
-                            }
-                        ]
-                    }
-                ], { model: 'gpt-5', stream: true });
+    function processFile(file){
+      if(!file)return;
+      uploadedFile=file; originalSize=file.size;
+      fileName.textContent=`📄 تم اختيار: ${file.name} (${formatFileSize(file.size)})`;
+      fileName.style.display='block';
+      if(file.type.includes('image')){
+        const reader=new FileReader();
+        reader.onload=e=>{
+          const img=new Image();
+          img.onload=()=>{
+            const canvas=document.createElement('canvas');
+            const ctx=canvas.getContext('2d');
+            canvas.width=img.width; canvas.height=img.height;
+            ctx.drawImage(img,0,0);
+            canvas.toBlob(blob=>{
+              compressedFile=new File([blob],file.name,{type:'image/jpeg'});
+              compressedSize=blob.size;
+              imagePreview.src=URL.createObjectURL(blob);
+              previewContainer.style.display='block';
+              compressionInfo.innerHTML=`الحجم الأصلي: ${formatFileSize(originalSize)} | بعد الضغط: ${formatFileSize(compressedSize)}`;
+              compressionInfo.style.display='block';
+            },'image/jpeg',0.9);
+          };
+          img.src=e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+      analyzeBtn.disabled=false;
+    }
 
-                let text = '';
+    analyzeBtn.addEventListener('click',analyzeImage);
 
-                // عرض النتيجة
-                for await (const part of completion) {
-                    if (part?.text) {
-                        text += part.text;
-                        analysisResult.innerHTML = formatAnalysisText(text);
-                    }
-                }
+    async function analyzeImage(){
+      if(!uploadedFile)return;
+      const reason=reasonInput.value.trim();
+      const examType=examTypeSelect.value;
+      if(!examType || !reason){alert('⚠️ يرجى اختيار نوع الفحص وكتابة سببه'); return;}
 
-                // تنظيف الملف المؤقت
-                await puter.fs.delete(uploadedPath);
+      analyzeBtn.disabled=true;
+      response.classList.add('show');
 
-            } catch (error) {
-                analysisResult.innerHTML = `<strong>خطأ:</strong><br>${error.message}`;
-            }
+      cardMeta.innerHTML=`<h3>📌 معلومات أساسية</h3>
+        <p><strong>🕒 تاريخ التحليل:</strong> ${new Date().toLocaleDateString('ar-EG')}</p>
+        <p><strong>🖼️ نوع الفحص:</strong> ${examType}</p>
+        <p><strong>📄 سبب الفحص:</strong> ${reason}</p>`;
+      cardFindings.innerHTML=`<h3>👀 المشاهدات</h3><p>⏳ جاري التحليل...</p>`;
+      cardDifferential.innerHTML=`<h3>⚕️ التشخيصات التفريقية</h3><p>⏳ جاري التحليل...</p>`;
 
-            analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = 'بدء التحليل <span class="button-icon">⚕️</span>';
+      try{
+        const fileToUpload=compressedFile||uploadedFile;
+        const fileExtension=fileToUpload.name.split('.').pop();
+        const puterFile=await puter.fs.write(`medical_${Date.now()}.${fileExtension}`,fileToUpload);
+        const uploadedPath=puterFile.path;
+
+        const prompt=`أنت خبير طبي مساعد. المطلوب:\n\n- الملف المرفق هو نتيجة فحص طبي.\n- نوع الفحص: ${examType}.\n- سبب طلب الفحص: ${reason}.\n\nأعطني النتيجة فقط بهذا الشكل:\n\nمشاهدات:\n- نقطة 1\n- نقطة 2\n- نقطة 3\n\nتشخيصات تفريقية:\n- احتمال 1\n- احتمال 2\n- احتمال 3`;
+
+        const completion=await puter.ai.chat([
+          {role:'user',content:[{type:'file',puter_path:uploadedPath},{type:'text',text:prompt}]}
+        ],{model:'gpt-5',stream:true});
+
+        let text='';
+        for await(const part of completion){
+          if(part?.text){
+            text+=part.text;
+            cardFindings.innerHTML=`<h3>👀 المشاهدات</h3>${extractSection(text,'مشاهدات')}`;
+            cardDifferential.innerHTML=`<h3>⚕️ التشخيصات التفريقية</h3>${extractSection(text,'تشخيصات تفريقية')}`;
+          }
         }
-        
-        // نسخ التقرير
-        function copyReport() {
-            const reportText = analysisResult.innerText;
-            navigator.clipboard.writeText(reportText)
-                .then(() => {
-                    showToast('تم نسخ التقرير إلى الحافظة', 'success');
-                })
-                .catch(err => {
-                    showToast('فشل في نسخ التقرير', 'error');
-                    console.error('Failed to copy: ', err);
-                });
-        }
-        
-        // تنسيق نص التحليل
-        function formatAnalysisText(text) {
-            // تحويل النص إلى فقرات وعناصر منظمة
-            const sections = text.split(/\n\n+/);
-            let formattedHTML = '';
-            
-            sections.forEach(section => {
-                if (section.trim() !== '') {
-                    // إذا كان العنوان الرئيسي
-                    if (section.includes(':')) {
-                        const parts = section.split(':');
-                        formattedHTML += `<h4>${parts[0]}:</h4><p>${parts.slice(1).join(':')}</p>`;
-                    } 
-                    // إذا كانت قائمة
-                    else if (section.includes('-')) {
-                        const items = section.split('\n').filter(item => item.trim().startsWith('-'));
-                        if (items.length > 0) {
-                            formattedHTML += '<ul>';
-                            items.forEach(item => {
-                                formattedHTML += `<li>${item.replace('-', '').trim()}</li>`;
-                            });
-                            formattedHTML += '</ul>';
-                        } else {
-                            formattedHTML += `<p>${section}</p>`;
-                        }
-                    } 
-                    // إذا كان فقرة عادية
-                    else {
-                        formattedHTML += `<p>${section}</p>`;
-                    }
-                }
-            });
-            
-            return formattedHTML;
-        }
-        
-        // عرض رسالة toast
-        function showToast(message, type = 'success') {
-            toast.textContent = message;
-            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--accent)';
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // تنسيق حجم الملف للعرض
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' بايت';
-            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' كيلوبايت';
-            else return (bytes / 1048576).toFixed(2) + ' ميجابايت';
-        }
-        
-        // تهيئة التطبيق عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+        await puter.fs.delete(uploadedPath);
+      }catch(err){
+        cardFindings.innerHTML='<strong>⚠️ خطأ:</strong> '+err.message;
+      }
+      analyzeBtn.disabled=false;
+    }
+
+    function extractSection(text,section){
+      const regex=new RegExp(section+":([\\s\\S]*?)(?=(مشاهدات:|تشخيصات تفريقية:|$))","i");
+      const match=text.match(regex);
+      if(match){return formatAsList(match[1].trim());}
+      return '<p>⚠️ لم يتم العثور على '+section+'</p>';
+    }
+
+    function formatAsList(text){
+      const lines=text.split(/\n|-/).map(l=>l.trim()).filter(l=>l);
+      return '<ul>'+lines.map(l=>`<li>${l}</li>`).join('')+'</ul>';
+    }
+
+    function formatFileSize(bytes){
+      if(bytes<1024)return bytes+' بايت';
+      else if(bytes<1048576)return(bytes/1024).toFixed(2)+' كيلوبايت';
+      else return(bytes/1048576).toFixed(2)+' ميجابايت';
+    }
+  </script>
 </body>
 </html>
