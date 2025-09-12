@@ -25,7 +25,9 @@
     .preview-container img{max-width:100%; max-height:280px; border-radius:12px; border:1px solid #eee;}
     .compression-info{margin-top:15px; text-align:center; background:#f8fafc; padding:10px; border-radius:8px; font-size:14px; color:#555;}
 
-    input[type=text], select {padding:12px; font-size:15px; border-radius:8px; border:1px solid #bbb; width:100%; max-width:500px; margin-top:10px;}
+    input[type=text], select {padding:12px; font-size:15px; border-radius:8px; border:1px solid #bbb; width:100%; margin-top:10px; display:block;}
+    #reasonInput {max-width:100%; box-sizing:border-box;}
+
     button{padding:14px 22px; border:none; border-radius:10px; color:white; font-weight:600; font-size:16px; cursor:pointer; transition:all .2s ease;}
     .btn-primary{background:#2b5f87;}
     .btn-primary:hover{background:#3f88c5;}
@@ -36,21 +38,26 @@
     .result-card {background:white; border-radius:12px; padding:20px; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,.05);}
     .result-card h3{margin-top:0; color:#2b5f87; font-size:18px; margin-bottom:10px;}
 
-    .print-btn {background:#27ae60; margin-top:15px;}
+    .action-buttons {display:flex; gap:10px; margin-top:15px;}
+    .action-btn {flex:1; text-align:center;}
+    .copy-btn {background:#2980b9;}
+    .copy-btn:hover{background:#3498db;}
+    .print-btn {background:#27ae60;}
     .print-btn:hover{background:#2ecc71;}
 
     @media print {
       body {background:white;}
-      header, .card, .upload-area, #reasonInput, #examTypeSelect, #analyzeBtn, .print-btn, .file-name, .preview-container, .compression-info {display:none !important;}
+      header, .card, .upload-area, #reasonInput, #examTypeSelect, #analyzeBtn, .action-buttons, .file-name, .preview-container, .compression-info {display:none !important;}
       #response {display:block !important; box-shadow:none; margin:0; padding:0;}
       #response .result-card {box-shadow:none; border:none; margin:0; padding:10px 0;}
-      #response:before {content:"التحليل\a\a"; white-space:pre; font-size:20px; font-weight:bold;}
+      #response:before {content:"معلومات أساسية\a"; white-space:pre; font-size:20px; font-weight:bold;}
     }
 
     @media (max-width:600px){
       header h1{font-size:22px;}
       .card{padding:18px;}
       button{width:100%;}
+      .action-buttons {flex-direction:column;}
     }
   </style>
 </head>
@@ -91,7 +98,10 @@
       <div class="result-card" id="card-meta"></div>
       <div class="result-card" id="card-findings"></div>
       <div class="result-card" id="card-differential"></div>
-      <button class="print-btn" onclick="sendScreenshotToTelegram()">📸 إرسال كصورة للتليجرام</button>
+      <div class="action-buttons">
+        <button class="action-btn copy-btn" onclick="copyReport()">📋 نسخ التقرير</button>
+        <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة التقرير</button>
+      </div>
     </div>
   </div>
 
@@ -210,33 +220,27 @@
       else if(bytes<1048576)return(bytes/1024).toFixed(2)+' كيلوبايت';
       else return(bytes/1048576).toFixed(2)+' ميجابايت';
     }
-  </script>
 
-<!-- مكتبة html2canvas لتصوير التقرير -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<script>
-  async function sendScreenshotToTelegram() {
-    try {
+    function copyReport() {
       const element = document.getElementById("response");
       if (!element.classList.contains("show")) {
-        alert("⚠️ لا يوجد تقرير لعرضه أو إرساله");
+        alert("⚠️ لا يوجد تقرير لنسخه");
         return;
       }
 
-      // تصوير العنصر وتحويله إلى صورة Base64
-      const canvas = await html2canvas(element, { scale: 2 });
-      const dataUrl = canvas.toDataURL("image/png");
+      const meta = document.getElementById("card-meta").innerText || "";
+      const findings = document.getElementById("card-findings").innerText || "";
+      const differential = document.getElementById("card-differential").innerText || "";
 
-      // إرسال البيانات للبوت عبر WebApp API
-      Telegram.WebApp.sendData(dataUrl);
+      const reportText = `${meta}\n\n${findings}\n\n${differential}`.trim();
 
-      alert("📤 تم إرسال التقرير للبوت، انتظر وصوله في المحادثة");
-    } catch (err) {
-      console.error("خطأ أثناء تجهيز التقرير:", err);
-      alert("⚠️ حدث خطأ أثناء تجهيز التقرير");
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert("📋 تم نسخ التقرير بنجاح");
+      }).catch(err => {
+        console.error("خطأ في النسخ:", err);
+        alert("⚠️ تعذر نسخ التقرير");
+      });
     }
-  }
-</script>
+  </script>
 </body>
 </html>
