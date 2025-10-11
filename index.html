@@ -752,8 +752,7 @@ input, textarea, [contenteditable="true"] {
       if (file) processFile(file);
     });
 
-    uploadArea.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
+    
 
     
 function processFiles(files) {
@@ -802,104 +801,67 @@ fileInput.addEventListener('change', (e) => processFiles(e.target.files));
 
     // التحليل عبر puter.ai (مع streaming وإصلاحات)
     analyzeBtn.addEventListener('click', async () => {
-      if (!uploadedFile) {
-        alert('⚠️حمّل ملف أولاً');
-        return;
-      }
+  if (uploadedFiles.length === 0) {
+    alert('⚠️ يرجى تحميل صورة واحدة على الأقل قبل بدء التحليل');
+    return;
+  }
 
-      const reason = document.getElementById('reasonInput').value.trim();
-      const examType = document.getElementById('examTypeSelect').value;
-      const age = document.getElementById('ageInput').value.trim();
-      const gender = document.getElementById('genderSelect').value;
-      const history = document.getElementById('historyInput').value.trim();
+  const reason = document.getElementById('reasonInput').value.trim();
+  const examType = document.getElementById('examTypeSelect').value;
+  const age = document.getElementById('ageInput').value.trim();
+  const gender = document.getElementById('genderSelect').value;
+  const history = document.getElementById('historyInput').value.trim();
 
-      if (!examType || !reason || !age || !gender) {
-        alert('⚠️ يرجى تعبئة الحقول المطلوبة');
-        return;
-      }
+  if (!examType || !reason || !age || !gender) {
+    alert('⚠️ يرجى تعبئة الحقول المطلوبة');
+    return;
+  }
 
-      analyzeBtn.disabled = true;
-      analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
-      const responseEl = document.getElementById('response');
-      responseEl.classList.add('show');
+  analyzeBtn.disabled = true;
+  analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
+  const responseEl = document.getElementById('response');
+  responseEl.classList.add('show');
 
-      // عرض المعلومات الأساسية
-      document.getElementById('card-meta').innerHTML = `
-        <h3><i class="fas fa-info-circle"></i> معلومات أساسية</h3>
-        <p><strong><i class="fas fa-x-ray"></i> نوع الفحص:</strong> ${examType}</p>
-        <p><strong><i class="fas fa-question-circle"></i> السبب:</strong> ${reason}</p>
-        <p><strong><i class="fas fa-birthday-cake"></i> العمر:</strong> ${age}</p>
-        <p><strong><i class="fas fa-venus-mars"></i> الجنس:</strong> ${gender}</p>
-        <p><strong><i class="fas fa-history"></i> تاريخ إضافي:</strong> ${history || 'لا يوجد'}</p>
-      `;
+  // عرض المعلومات الأساسية
+  document.getElementById('card-meta').innerHTML = `
+    <h3><i class="fas fa-info-circle"></i> معلومات أساسية</h3>
+    <p><strong><i class="fas fa-x-ray"></i> نوع الفحص:</strong> ${examType}</p>
+    <p><strong><i class="fas fa-question-circle"></i> السبب:</strong> ${reason}</p>
+    <p><strong><i class="fas fa-birthday-cake"></i> العمر:</strong> ${age}</p>
+    <p><strong><i class="fas fa-venus-mars"></i> الجنس:</strong> ${gender}</p>
+    <p><strong><i class="fas fa-history"></i> تاريخ إضافي:</strong> ${history || 'لا يوجد'}</p>
+  `;
 
-      document.getElementById('card-findings').innerHTML = "<h3><i class='fas fa-eye'></i> المشاهدات</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
-      document.getElementById('card-differential').innerHTML = "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
+  document.getElementById('card-findings').innerHTML = "<h3><i class='fas fa-eye'></i> المشاهدات</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
+  document.getElementById('card-differential').innerHTML = "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
 
-      try {
-        const fileExtension = uploadedFile.name.split('.').pop();
-        
-            const prompt = `
-You are a highly skilled medical imaging expert with extensive experience in radiology, diagnostic imaging, and clinical interpretation.
-
-Analyze the uploaded medical image carefully and provide a structured and comprehensive diagnostic report **in Arabic**.
-
-Follow **exactly** this format and use these Arabic section headers **verbatim** (do not translate them):
-
-مشاهدات:
-- Describe key radiological findings and notable observations in bullet points.
-- Mention any abnormal densities, shadows, opacities, masses, or anatomical deviations.
-
-تشخيصات تفريقية:
-- List possible differential diagnoses in bullet points.
-- Include a short justification for each and a confidence level (High / Moderate / Low).
-- Keep this section header written **exactly** as “تشخيصات تفريقية:” in Arabic.
-
-ملاحظات:
-- Provide any important notes, recommendations, or next diagnostic steps.
-- Summarize the interpretation in simple, patient-friendly Arabic.
-
-Additional context for the analysis:
-- Exam type: ${examType}
-- Reason for exam: ${reason}
-- Age: ${age}
-- Gender: ${gender}
-- History/symptoms: ${history || 'لا يوجد'}
-
-Formatting instructions:
-- Use Arabic for all report content.
-- Keep section titles exactly as shown: "مشاهدات:", "تشخيصات تفريقية:", "ملاحظات:".
-- Present information as clear bullet points (use “-” for each line).
-- Avoid Markdown symbols (#, **, etc.).
-- Be concise, accurate, and medically sound.
-`;
-
-            
-let allResults = "";
-for (const file of uploadedFiles) {
-  const result = await analyzeWithGemini(file, prompt);
-  allResults += `
+  try {
+    let allResults = "";
+    for (const file of uploadedFiles) {
+      const result = await analyzeWithGemini(file, prompt);
+      allResults += `
 
 📸 تحليل الصورة: ${file.name}
 ${result}`;
-}
-const text = allResults;
+    }
+    const text = allResults;
 
-            document.getElementById('card-findings').innerHTML =
-              "<h3><i class='fas fa-eye'></i> المشاهدات</h3>" +
-              extractSection(text, "مشاهدات");
-            document.getElementById('card-differential').innerHTML =
-              "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
-              extractSection(text, "تشخيصات تفريقية");
-            incrementReportCount();
-            
-      } catch (err) {
-        document.getElementById('card-findings').innerHTML = `<h3><i class='fas fa-exclamation-triangle'></i> خطأ</h3><p><strong><i class='fas fa-times'></i> ${err.message}</strong></p>`;
-        document.getElementById('card-differential').innerHTML = '';
-      }
-      analyzeBtn.innerHTML = '<i class="fas fa-play-circle"></i> بدء التحليل';
-      analyzeBtn.disabled = false;
-    });
+    document.getElementById('card-findings').innerHTML =
+      "<h3><i class='fas fa-eye'></i> المشاهدات</h3>" +
+      extractSection(text, "مشاهدات");
+    document.getElementById('card-differential').innerHTML =
+      "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
+      extractSection(text, "تشخيصات تفريقية");
+
+    incrementReportCount();
+  } catch (err) {
+    document.getElementById('card-findings').innerHTML = `<h3><i class='fas fa-exclamation-triangle'></i> خطأ</h3><p><strong><i class='fas fa-times'></i> ${err.message}</strong></p>`;
+    document.getElementById('card-differential').innerHTML = '';
+  }
+
+  analyzeBtn.innerHTML = '<i class="fas fa-play-circle"></i> بدء التحليل';
+  analyzeBtn.disabled = false;
+});
 
     function extractSection(text, section) {
       const regex = new RegExp(`${section}:[\\s\\S]*?(?=(مشاهدات:|تشخيصات تفريقية:|ملاحظات:|$))`, "i");
