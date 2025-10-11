@@ -760,17 +760,14 @@ function processFiles(files) {
     if (!file.type.includes("image")) continue;
     uploadedFiles.push(file);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = document.createElement("img");
-      img.src = e.target.result;
-      img.style.maxWidth = "150px";
-      img.style.maxHeight = "150px";
-      img.style.margin = "6px";
-      img.style.borderRadius = "10px";
-      previewContainer.appendChild(img);
-    };
-    reader.readAsDataURL(file);
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.onload = () => URL.revokeObjectURL(img.src);
+    img.style.maxWidth = '150px';
+    img.style.maxHeight = '150px';
+    img.style.margin = '6px';
+    img.style.borderRadius = '10px';
+    previewContainer.appendChild(img);
   }
 
   if (uploadedFiles.length > 0) {
