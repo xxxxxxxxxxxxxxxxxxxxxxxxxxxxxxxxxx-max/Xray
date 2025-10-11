@@ -64,7 +64,7 @@
       --conf-low: #dc2626;
       --animated-text-color: #a5b4fc; /* للنصوص المتحركة في الدارك */
       --secondary-button-bg: #2a2a2a;
-      --secondary-button-hover: #3a3a3a;
+      --secondary-button-hover: #3a3a2a;
     }
   /* منع تحديد النص في كامل الموقع */
 * {
@@ -349,10 +349,43 @@ input, textarea, [contenteditable="true"] {
       margin-top: 10px;
     }
 
-    .preview-container img {
+    /* إضافة أنماط للمعاينات المتعددة */
+    #previews {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      justify-items: center;
+    }
+
+    .preview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .preview-item img {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      object-fit: cover;
+    }
+
+    .preview-item .file-name-small {
+      font-size: 12px;
+      color: var(--secondary-text);
+      text-align: center;
+      max-width: 120px;
+      word-break: break-word;
+    }
+
+    .preview-container .single-preview {
       max-width: 100%;
       max-height: 250px;
       border-radius: 10px;
+      display: none; /* مخفي إذا كان هناك معاينات متعددة */
     }
 
     /* الحقول (كما في xray السابق) */
@@ -500,6 +533,15 @@ input, textarea, [contenteditable="true"] {
         font-size: 2.5rem;
       }
 
+      #previews {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+
+      .preview-item img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+
       footer { padding: 10px; font-size: 12px; }
     }
 
@@ -579,11 +621,16 @@ input, textarea, [contenteditable="true"] {
 <div class="card">
 <div class="upload-area" id="uploadArea">
 <i class="fas fa-cloud-upload-alt"></i>
-<p>انقر لتحميل الملف أو اسحبه هنا</p>
+<p>انقر لتحميل الملف أو اسحبه هنا (يمكن اختيار عدة صور)</p>
 <input accept=".jpg,.jpeg,.png,.dcm" id="fileInput" type="file" multiple/>
 </div>
 <div class="file-name" id="fileName"></div>
-<div class="preview-container" id="previewContainer"><img id="imagePreview" style="display:none;"/></div>
+<div class="preview-container" id="previewContainer">
+  <!-- معاينة واحدة (للملفات الواحدة فقط) -->
+  <img id="imagePreview" class="single-preview" style="display:none;"/>
+  <!-- معاينات متعددة -->
+  <div id="previews"></div>
+</div>
 </div>
 <!-- تفاصيل الفحص (كما في xray) -->
 <div class="card">
@@ -628,43 +675,45 @@ input, textarea, [contenteditable="true"] {
 <script>
     // --- Gemini API Integration ---
     const API_KEY = "AIzaSyCTpQOvoMLUb9mX1dos-zw0uLqKjs5ADTE";
-    async function analyzeWithGemini(uploadedFile, prompt) {
-      const reader = new FileReader();
-      return new Promise((resolve, reject) => {
-        reader.onload = async () => {
-          try {
-            const base64Image = reader.result.split(',')[1];
-            const body = {
-              contents: [{
-                parts: [
-                  { inline_data: { mime_type: uploadedFile.type, data: base64Image } },
-                  { text: prompt }
-                ]
-              }]
-            };
+    async function analyzeWithGemini(uploadedFiles, prompt) {
+      // قراءة جميع الملفات كـ base64
+      const base64Images = await Promise.all(uploadedFiles.map(file => 
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ mime_type: file.type, data: reader.result.split(',')[1] });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        })
+      ));
 
-            const response = await fetch(
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=" + API_KEY,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-              }
-            );
-
-            const data = await response.json();
-            if (data?.candidates?.length) {
-              resolve(data.candidates[0].content.parts.map(p => p.text || "").join("\n"));
-            } else {
-              reject(new Error("لم يتم الحصول على استجابة صالحة من السيرفر"));
-            }
-          } catch (err) {
-            reject(err);
-          }
+      try {
+        const body = {
+          contents: [{
+            parts: [
+              ...base64Images.map(img => ({ inline_data: img })),
+              { text: prompt }
+            ]
+          }]
         };
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(uploadedFile);
-      });
+
+        const response = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=" + API_KEY,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          }
+        );
+
+        const data = await response.json();
+        if (data?.candidates?.length) {
+          resolve(data.candidates[0].content.parts.map(p => p.text || "").join("\n"));
+        } else {
+          reject(new Error("لم يتم الحصول على استجابة صالحة من السيرفر"));
+        }
+      } catch (err) {
+        reject(err);
+      }
     }
 
 
@@ -728,14 +777,15 @@ input, textarea, [contenteditable="true"] {
       document.getElementById("reportCount").textContent = reportCount;
     }
 
-    // رفع وضغط الصور (مع drag & drop وإصلاح innerHTML)
+    // رفع وضغط الصور (مع drag & drop ودعم متعدد الملفات)
     const fileInput = document.getElementById('fileInput');
     const uploadArea = document.getElementById('uploadArea');
     const fileName = document.getElementById('fileName');
     const imagePreview = document.getElementById('imagePreview');
     const analyzeBtn = document.getElementById('analyzeBtn');
     const previewContainer = document.getElementById('previewContainer');
-    let uploadedFiles = [];
+    const previewsDiv = document.getElementById('previews');
+    let uploadedFiles = []; // مصفوفة للملفات المتعددة
 
     // دعم drag & drop
     uploadArea.addEventListener('dragover', (e) => {
@@ -748,117 +798,173 @@ input, textarea, [contenteditable="true"] {
     uploadArea.addEventListener('drop', (e) => {
       e.preventDefault();
       uploadArea.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      if (file) processFile(file);
+      processFile(e.dataTransfer.files);
     });
 
-    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => processFile(e.target.files));
 
-    
-function processFiles(files) {
-  for (const file of files) {
-    if (!file.type.includes("image")) continue;
-    uploadedFiles.push(file);
-
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(file);
-    img.onload = () => URL.revokeObjectURL(img.src);
-    img.style.maxWidth = '150px';
-    img.style.maxHeight = '150px';
-    img.style.margin = '6px';
-    img.style.borderRadius = '10px';
-    previewContainer.appendChild(img);
-  }
-
-  if (uploadedFiles.length > 0) {
-    const fileList = uploadedFiles.map(f => f.name).join("<br>");
-    fileName.innerHTML = `
-      <i class="fas fa-images" style="color:var(--icon-color); margin-left:0.5rem;"></i>
-      <strong>عدد الصور:</strong> ${uploadedFiles.length}<br>
-      <div style="font-size:13px; color:var(--secondary-text); margin-top:4px;">${fileList}</div>
-    `;
-  } else {
-    fileName.textContent = "";
-  }
-
-  analyzeBtn.disabled = uploadedFiles.length === 0;
-  fileInput.value = ""; // reset input
-  uploadArea.blur();    // prevent reopening file dialog
-  document.activeElement.blur(); // ensure blur on mobile
-}
-
-uploadArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove('dragover');
-  processFiles(e.dataTransfer.files);
-});
-uploadArea.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', (e) => processFiles(e.target.files));
-
-
-    // التحليل عبر puter.ai (مع streaming وإصلاحات)
-    analyzeBtn.addEventListener('click', async () => {
-  if (uploadedFiles.length === 0) {
-    alert('⚠️ يرجى تحميل صورة واحدة على الأقل قبل بدء التحليل');
-    return;
-  }
-
-  const reason = document.getElementById('reasonInput').value.trim();
-  const examType = document.getElementById('examTypeSelect').value;
-  const age = document.getElementById('ageInput').value.trim();
-  const gender = document.getElementById('genderSelect').value;
-  const history = document.getElementById('historyInput').value.trim();
-
-  if (!examType || !reason || !age || !gender) {
-    alert('⚠️ يرجى تعبئة الحقول المطلوبة');
-    return;
-  }
-
-  analyzeBtn.disabled = true;
-  analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
-  const responseEl = document.getElementById('response');
-  responseEl.classList.add('show');
-
-  // عرض المعلومات الأساسية
-  document.getElementById('card-meta').innerHTML = `
-    <h3><i class="fas fa-info-circle"></i> معلومات أساسية</h3>
-    <p><strong><i class="fas fa-x-ray"></i> نوع الفحص:</strong> ${examType}</p>
-    <p><strong><i class="fas fa-question-circle"></i> السبب:</strong> ${reason}</p>
-    <p><strong><i class="fas fa-birthday-cake"></i> العمر:</strong> ${age}</p>
-    <p><strong><i class="fas fa-venus-mars"></i> الجنس:</strong> ${gender}</p>
-    <p><strong><i class="fas fa-history"></i> تاريخ إضافي:</strong> ${history || 'لا يوجد'}</p>
-  `;
-
-  document.getElementById('card-findings').innerHTML = "<h3><i class='fas fa-eye'></i> المشاهدات</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
-  document.getElementById('card-differential').innerHTML = "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
-
-  try {
-    let allResults = "";
-    for (const file of uploadedFiles) {
-      const result = await analyzeWithGemini(file, prompt);
-      allResults += `
-
-📸 تحليل الصورة: ${file.name}
-${result}`;
+    function processFile(files) {
+      if (!files || files.length === 0) return;
+      
+      // فلترة الملفات الصالحة (صور أو DICOM فقط)
+      uploadedFiles = Array.from(files).filter(file => 
+        file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.dcm')
+      );
+      
+      if (uploadedFiles.length === 0) {
+        alert('⚠️ يرجى اختيار ملفات صالحة (صور أو DICOM).');
+        return;
+      }
+      
+      // عرض أسماء الملفات (قائمة)
+      const fileListHtml = uploadedFiles.map(file => {
+        const icon = file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.dcm') ? 'fas fa-file-image' : 'fas fa-file-pdf';
+        return `<div><i class="${icon}" style="color:var(--icon-color); margin-left:0.5rem;"></i> ${file.name}</div>`;
+      }).join('');
+      fileName.innerHTML = `<p><i class="fas fa-images" style="color:var(--icon-color);"></i> تم تحميل ${uploadedFiles.length} ملف:</p> ${fileListHtml}`;
+      
+      // معالجة المعاينات
+      previewsDiv.innerHTML = ''; // مسح المعاينات السابقة
+      imagePreview.style.display = 'none'; // إخفاء المعاينة الفردية
+      
+      uploadedFiles.forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+              // تصغير للمعاينة (thumbnail)
+              const maxSize = 120;
+              const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+              canvas.width = img.width * ratio;
+              canvas.height = img.height * ratio;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                  <img src="${url}" alt="Preview ${index + 1}" />
+                  <div class="file-name-small">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</div>
+                `;
+                previewsDiv.appendChild(previewItem);
+                
+                // استبدال الملف المضغوط
+                uploadedFiles[index] = new File([blob], file.name, { type: "image/jpeg" });
+              }, "image/jpeg", 0.85);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // لـ DICOM أو غير مدعوم، عرض اسم فقط
+          const previewItem = document.createElement('div');
+          previewItem.className = 'preview-item';
+          previewItem.innerHTML = `
+            <i class="fas fa-file-medical" style="font-size: 3rem; color: var(--icon-color);"></i>
+            <div class="file-name-small">${file.name}</div>
+          `;
+          previewsDiv.appendChild(previewItem);
+        }
+      });
+      
+      previewContainer.style.display = 'block';
+      analyzeBtn.disabled = false;
     }
-    const text = allResults;
 
-    document.getElementById('card-findings').innerHTML =
-      "<h3><i class='fas fa-eye'></i> المشاهدات</h3>" +
-      extractSection(text, "مشاهدات");
-    document.getElementById('card-differential').innerHTML =
-      "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
-      extractSection(text, "تشخيصات تفريقية");
+    // التحليل عبر Gemini (مع دعم متعدد الصور)
+    analyzeBtn.addEventListener('click', async () => {
+      if (uploadedFiles.length === 0) {
+        alert('⚠️ حمّل ملفات أولاً');
+        return;
+      }
 
-    incrementReportCount();
-  } catch (err) {
-    document.getElementById('card-findings').innerHTML = `<h3><i class='fas fa-exclamation-triangle'></i> خطأ</h3><p><strong><i class='fas fa-times'></i> ${err.message}</strong></p>`;
-    document.getElementById('card-differential').innerHTML = '';
-  }
+      const reason = document.getElementById('reasonInput').value.trim();
+      const examType = document.getElementById('examTypeSelect').value;
+      const age = document.getElementById('ageInput').value.trim();
+      const gender = document.getElementById('genderSelect').value;
+      const history = document.getElementById('historyInput').value.trim();
 
-  analyzeBtn.innerHTML = '<i class="fas fa-play-circle"></i> بدء التحليل';
-  analyzeBtn.disabled = false;
-});
+      if (!examType || !reason || !age || !gender) {
+        alert('⚠️ يرجى تعبئة الحقول المطلوبة');
+        return;
+      }
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
+      const responseEl = document.getElementById('response');
+      responseEl.classList.add('show');
+
+      // عرض المعلومات الأساسية (مع عدد الملفات)
+      document.getElementById('card-meta').innerHTML = `
+        <h3><i class="fas fa-info-circle"></i> معلومات أساسية</h3>
+        <p><strong><i class="fas fa-x-ray"></i> نوع الفحص:</strong> ${examType}</p>
+        <p><strong><i class="fas fa-images"></i> عدد الصور:</strong> ${uploadedFiles.length}</p>
+        <p><strong><i class="fas fa-question-circle"></i> السبب:</strong> ${reason}</p>
+        <p><strong><i class="fas fa-birthday-cake"></i> العمر:</strong> ${age}</p>
+        <p><strong><i class="fas fa-venus-mars"></i> الجنس:</strong> ${gender}</p>
+        <p><strong><i class="fas fa-history"></i> تاريخ إضافي:</strong> ${history || 'لا يوجد'}</p>
+      `;
+
+      document.getElementById('card-findings').innerHTML = "<h3><i class='fas fa-eye'></i> المشاهدات</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
+      document.getElementById('card-differential').innerHTML = "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
+
+      try {
+        const prompt = `
+You are a highly skilled medical imaging expert with extensive experience in radiology, diagnostic imaging, and clinical interpretation.
+
+Analyze these multiple uploaded medical images carefully and provide a structured and comprehensive diagnostic report **in Arabic**. Consider all images together as a series if applicable.
+
+Follow **exactly** this format and use these Arabic section headers **verbatim** (do not translate them):
+
+مشاهدات:
+- Describe key radiological findings and notable observations from all images in bullet points.
+- Mention any abnormal densities, shadows, opacities, masses, or anatomical deviations across the images.
+
+تشخيصات تفريقية:
+- List possible differential diagnoses in bullet points based on the combined images.
+- Include a short justification for each and a confidence level (High / Moderate / Low).
+- Keep this section header written **exactly** as “تشخيصات تفريقية:” in Arabic.
+
+ملاحظات:
+- Provide any important notes, recommendations, or next diagnostic steps.
+- Summarize the interpretation in simple, patient-friendly Arabic.
+
+Additional context for the analysis:
+- Exam type: ${examType}
+- Number of images: ${uploadedFiles.length}
+- Reason for exam: ${reason}
+- Age: ${age}
+- Gender: ${gender}
+- History/symptoms: ${history || 'لا يوجد'}
+
+Formatting instructions:
+- Use Arabic for all report content.
+- Keep section titles exactly as shown: "مشاهدات:", "تشخيصات تفريقية:", "ملاحظات:".
+- Present information as clear bullet points (use “-” for each line).
+- Avoid Markdown symbols (#, **, etc.).
+- Be concise, accurate, and medically sound.
+`;
+
+        const text = await analyzeWithGemini(uploadedFiles, prompt);
+        document.getElementById('card-findings').innerHTML =
+          "<h3><i class='fas fa-eye'></i> المشاهدات</h3>" +
+          extractSection(text, "مشاهدات");
+        document.getElementById('card-differential').innerHTML =
+          "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
+          extractSection(text, "تشخيصات تفريقية");
+        incrementReportCount();
+        
+      } catch (err) {
+        document.getElementById('card-findings').innerHTML = `<h3><i class='fas fa-exclamation-triangle'></i> خطأ</h3><p><strong><i class='fas fa-times'></i> ${err.message}</strong></p>`;
+        document.getElementById('card-differential').innerHTML = '';
+      }
+      analyzeBtn.innerHTML = '<i class="fas fa-play-circle"></i> بدء التحليل';
+      analyzeBtn.disabled = false;
+    });
 
     function extractSection(text, section) {
       const regex = new RegExp(`${section}:[\\s\\S]*?(?=(مشاهدات:|تشخيصات تفريقية:|ملاحظات:|$))`, "i");
