@@ -4,61 +4,70 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>قسم القصة السريرية - داخلية عامة / جراحة - طبيبي</title>
+<title> طبيبي — واجهة التحليل الطبي</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css" rel="stylesheet"/> <!-- إذا كان لديك ملف خارجي، يمكن حذفه إذا اعتمدت على <style> -->
-<script src="https://js.puter.com/v2/"></script>
 <style>
-  /* CSS Variables للـThemes (مُحدثة وموحدة مع story.html) */
-:root {
-  --bg-color: #f5f7fa;
-  --card-bg: #ffffff;
-  --text-color: #333;
-  --secondary-text: #666;
-  --border-color: #d1d5db;
-  --primary-blue: #1e88e5;
-  --button-bg: #1e88e5;
-  --button-hover: #1565c0;
-  --secondary-button-bg: #f1f1f1;
-  --secondary-button-hover: #ddd;
-  --success-green: #4caf50;
-  --shadow-light: rgba(0,0,0,0.05);
-  --icon-color: #1e88e5;
-  --animated-text-color: #60a5fa;
-  --border-radius: 12px;
-  --shadow: 0 6px 20px var(--shadow-light);
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+    /* CSS Variables للـThemes (دمج مع السابق في xray.html) */
+    :root {
+      /* Light Mode (افتراضي) */
+      --bg-color: #f4f7fb;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --secondary-text: #444;
+      --border-color: #bbb;
+      --primary-blue: #1e88e5;
+      --button-bg: #2b5f87;
+      --button-hover: #3f88c5;
+      --upload-bg: #f9fcff;
+      --upload-border: #b3cce6;
+      --upload-hover-bg: #eef6ff;
+      --upload-hover-border: #3f88c5;
+      --shadow-light: rgba(0,0,0,.06);
+      --shadow-medium: rgba(0,0,0,.05);
+      --shadow-heavy: rgba(0,0,0,.05);
+      --icon-color: #1e88e5; /* لون الأيقونات */
+      --conf-high: #16a34a; /* أضفت للتشخيصات كما في السابق */
+      --conf-moderate: #f97316;
+      --conf-low: #dc2626;
+      --animated-text-color: #60a5fa; /* للنصوص المتحركة كما في xray */
+      --secondary-button-bg: #f1f1f1;
+      --secondary-button-hover: #ddd;
+    }
+  [data-theme="dark"] header,
+[data-theme="dark"] footer {
+  background: #0d47a1 !important;
 }
 
-[data-theme="dark"] {
-  --bg-color: #121212;
-  --card-bg: #1e1e1e;
-  --text-color: #e0e0e0;
-  --secondary-text: #b0b0b0;
-  --border-color: #4b5563;
-  --primary-blue: #0d47a1;
-  --button-bg: #0d47a1;
-  --button-hover: #1565c0;
-  --secondary-button-bg: #2a2a2a;
-  --secondary-button-hover: #3a3a3a;
-  --success-green: #388e3c;
-  --shadow-light: rgba(255,255,255,0.05);
-  --icon-color: #90caf9;
-  --animated-text-color: #a5b4fc;
-  --shadow: 0 6px 20px var(--shadow-light);
-}
-
-body {
-  margin: 0;
-  font-family: 'Tajawal', sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  transition: background-color 0.3s, color 0.3s;
-}
-    * {
+    [data-theme="dark"] {
+      
+      /* Dark Mode */
+      --bg-color: #1a1a1a;
+      --card-bg: #2c2c2c;
+      --text-color: #f5f5f5;
+      --secondary-text: #b8b8b8;
+      --border-color: #555;
+      --primary-blue: #64b5f6;
+      --button-bg: #37474f;
+      --button-hover: #546e7a;
+      --upload-bg: #2d3748;
+      --upload-border: #4a5568;
+      --upload-hover-bg: #4a5568;
+      --upload-hover-border: #63b3ed;
+      --shadow-light: rgba(0,0,0,.3);
+      --shadow-medium: rgba(0,0,0,.4);
+      --shadow-heavy: rgba(0,0,0,.2);
+      --icon-color: #64b5f6; /* لون الأيقونات في الدارك */
+      --conf-high: #16a34a;
+      --conf-moderate: #f97316;
+      --conf-low: #dc2626;
+      --animated-text-color: #a5b4fc; /* للنصوص المتحركة في الدارك */
+      --secondary-button-bg: #2a2a2a;
+      --secondary-button-hover: #3a3a3a;
+    }
+  /* منع تحديد النص في كامل الموقع */
+* {
     -webkit-user-select: none;  /* Safari */
     -moz-user-select: none;     /* Firefox */
     -ms-user-select: none;      /* Internet Explorer/Edge */
@@ -73,337 +82,96 @@ input, textarea, [contenteditable="true"] {
     user-select: text;          /* Non-prefixed version */
 }
 
-/* نافذة الأسئلة التفاعلية */
-.symptom-description {
-  background: rgba(30, 136, 229, 0.1);
-  padding: 15px;
-  border-radius: var(--border-radius);
-  margin-bottom: 20px;
-  border-right: 4px solid var(--primary-blue);
+    body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg-color);
+  margin: 0;
   color: var(--text-color);
-}
-
-.questions-container {
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.question-item {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.question-item h4 {
-  margin: 0 0 10px 0;
-  color: var(--primary-blue);
-  font-size: 15px;
-}
-
-.question-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.option {
-  padding: 8px 15px;
-  background: var(--secondary-button-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 14px;
-}
-
-.option:hover {
-  background: var(--secondary-button-hover);
-}
-
-.option.selected {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
-}
-
-.option.multiple-selected {
-  background: var(--success-green);
-  color: white;
-  border-color: var(--success-green);
-}
-
-.question-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  margin-top: 5px;
-}
-
-.question-input:focus {
-  border-color: var(--primary-blue);
-  outline: none;
-}
-
-.range-container {
-  margin-top: 10px;
-}
-
-.range-value {
-  text-align: center;
-  font-weight: bold;
-  color: var(--primary-blue);
-  margin-top: 5px;
-  display: block;
-}
-
-.questions-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color);
-}
-
-/* CSS للـ Radio Group (جديد) */
-.radio-group {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  transition: background 0.3s ease, color 0.3s ease;
 }
+  h1 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
 
-.radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
+    h1 i {
+      font-size: 1.5rem;
+      color: var(--icon-color);
+    }
+  .wrap {
+      max-width: 980px;
+      padding: 16px;
+      margin: 0 auto;
+      padding: 10px;
+    }
 
-.radio-group input[type="radio"] {
-  width: auto;
-  margin: 0;
-}
+    a { text-decoration: none; }
 
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
-}
+    /* الهيدر (مدمج من dashboard.html مع تعديل: إزالة hamburger وإضافة back button) */
+    header {
+      background: var(--primary-blue);
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background-color 0.3s;
+      box-shadow: 0 2px 8px var(--shadow-light);
+    }
 
-.checkbox-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
+    header .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
 
-.checkbox-group input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-}
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
 
-/* تحسينات للوضع الدارك */
-[data-theme="dark"] .symptom-description {
-  background: rgba(30, 136, 229, 0.2);
-}
+    header small {
+      font-size: 13px;
+      color: #e3f2fd;
+      margin-top: 2px;
+    }
 
-[data-theme="dark"] .option {
-  background: var(--secondary-button-bg);
-}
+    /* زر الرجوع (بدلاً من hamburger) */
+    #back-btn {
+      font-size: 26px;
+      background: var(--secondary-button-bg);
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 6px 10px;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+      font-weight: bold;
+    }
 
-[data-theme="dark"] .question-input,
-[data-theme="dark"] .question-input:focus {
-  background: var(--card-bg);
-  color: var(--text-color);
-  border-color: var(--border-color);
-}
+    #back-btn:hover { 
+      background: var(--secondary-button-hover);
+    }
 
-/* نافذة الموسوعة */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background-color: var(--card-bg);
-  margin: 5% auto;
-  padding: 0;
-  border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 800px;
-  max-height: 80vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow);
-  animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(var(--primary-blue), 0.05);
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: var(--primary-blue);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.close {
-  color: var(--secondary-text);
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.close:hover {
-  color: var(--primary-blue);
-}
-
-.modal-body {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.search-container {
-  margin-bottom: 15px;
-}
-
-.search-container input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background: var(--card-bg);
-  color: var(--text-color);
-  font-size: 14px;
-}
-
-.search-container input:focus {
-  border-color: var(--primary-blue);
-  outline: none;
-}
-
-.symptoms-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.symptom-item {
-  padding: 15px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.symptom-item:hover {
-  border-color: var(--primary-blue);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.symptom-item h4 {
-  margin: 0 0 5px 0;
-  color: var(--primary-blue);
-}
-
-.symptom-item p {
-  margin: 0;
-  color: var(--secondary-text);
-  font-size: 14px;
-}
-
-/* الهيدر */
-header {
-  background: var(--primary-blue);
-  color: #fff;
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background-color 0.3s;
-  box-shadow: 0 2px 8px var(--shadow-light);
-}
-
-header .logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 24px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-}
-
-header small {
-  font-size: 13px;
-  color: #e3f2fd;
-  margin-top: 2px;
-}
-
-/* زر الرجوع */
-#back-btn {
-  font-size: 26px;
-  background: var(--secondary-button-bg);
-  border: none;
-  color: var(--text-color);
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  padding: 10px;
-  transition: background 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: inherit;
-  font-weight: bold;
-}
-
-#back-btn:hover { 
-  background: var(--secondary-button-hover);
-}
-
-/* الفوتر */
-footer {
+    /* الفوتر (مدمج من dashboard.html) */
+    footer {
   text-align: center;
   padding: 15px;
   background: var(--primary-blue);
@@ -411,2658 +179,762 @@ footer {
   font-size: 14px;
   transition: background-color 0.3s;
   margin-top: auto;
+  width: 100%; /* إضافة */
+  box-sizing: border-box; /* إضافة */
 }
-
-main {
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 15px;
   flex: 1;
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  box-sizing: border-box;
+  width: 100%; /* إضافة */
+  box-sizing: border-box; /* إضافة */
 }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px var(--shadow-light);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.wrap {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-/* Header-card */
-.header-card {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: background 0.3s ease;
-  text-align: center;
-}
-
-.step-card {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: background 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
-  display: none;
-}
-
-.step-card.active {
-  display: block;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-h1 {
-  margin: 0 0 10px;
-  font-size: 24px;
-  color: var(--primary-blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-h2 {
-  margin: 0 0 15px;
-  font-size: 18px;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 8px;
-}
-
-h3 { margin: 15px 0 10px; font-size: 16px; color: var(--primary-blue); }
-
-h2 i, h3 i { color: var(--icon-color); }
-
-.grid {
-  display: grid;
-  gap: 12px;
-}
-
-.cols-2 { grid-template-columns: 1fr 1fr; }
-.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-
-label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  font-size: 14px;
-  box-sizing: border-box;
-  background: var(--card-bg) !important;
-  color: var(--text-color) !important;
-  transition: border-color 0.3s ease;
-}
-
-input::placeholder, textarea::placeholder {
-  color: var(--secondary-text) !important;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--primary-blue);
-  outline: none;
-}
-
-textarea { min-height: 80px; resize: vertical; }
-
-input[readonly] {
-  background: var(--secondary-button-bg) !important;
-  cursor: not-allowed;
-}
-
-.conditional { 
-  display: none; 
-  margin-top: 10px; 
-  padding: 10px; 
-  border: 1px dashed var(--border-color); 
-  border-radius: 6px; 
-  background: rgba(0,0,0,0.02);
-}
-
-.conditional.show { display: block; }
-
-[data-theme="dark"] .conditional { 
-  background: rgba(255,255,255,0.05);
-}
-
-.btn {
-  padding: 10px 16px;
-  background: var(--button-bg);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 5px;
-}
-
-.btn:hover { background: var(--button-hover); }
-
-.btn-secondary { background: var(--secondary-button-bg); color: var(--text-color); }
-
-.btn-secondary:hover { background: var(--secondary-button-hover); }
-
-.btn-wizard {
-  margin: 20px 5px 0;
-  padding: 12px 24px;
-  font-size: 16px;
-  width: auto;
-}
-
-.wizard-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  border-top: 1px solid var(--border-color);
-  padding-top: 15px;
-}
-
-.list-section {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 15px;
-  margin: 10px 0;
-  background: rgba(0,0,0,0.02);
-}
-
-.list-item {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding: 10px;
-  background: rgba(0,0,0,0.02);
-  border-radius: 6px;
-}
-
-.list-item input, .list-item select, .list-item textarea { flex: 1; }
-
-[data-theme="dark"] .list-item, [data-theme="dark"] .list-section { 
-  background: rgba(255,255,255,0.05); 
-}
-
-.remove-btn {
-  background: #ef4444;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s;
-}
-
-.remove-btn:hover { background: #dc2626; }
-
-.add-btn { margin-top: 10px; }
-
-/* النص المتحرك في Header-card */
-.animated-phrase {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--animated-text-color);
-  margin: 15px 0;
-  padding: 10px 20px;
-  border-radius: 25px;
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(96, 165, 250, 0.05));
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
-
-[data-theme="dark"] .animated-phrase { 
-  background: linear-gradient(135deg, rgba(165, 180, 252, 0.1), rgba(165, 180, 252, 0.05)); 
-}
-
-.animated-phrase.show {
-  opacity: 1;
-  animation: fadeGlow 3s ease-in-out infinite;
-}
-
-@keyframes fadeGlow {
-  0%, 100% { opacity: 0.6; transform: scale(1); text-shadow: 0 0 5px rgba(96, 165, 250, 0.3); }
-  50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 20px rgba(96, 165, 250, 0.6); }
-}
-
-/* Progress Bar */
-.progress-bar {
-  margin: 20px 0;
-  background: var(--border-color);
-  height: 8px;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--primary-blue);
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-/* Results Section */
-#resultsSection {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
-  margin: 20px 0;
-  display: none;
-}
-
-#resultsSection h2 {
-  text-align: center;
-  color: var(--primary-blue);
-  margin-bottom: 15px;
-}
-
-#resultsTable {
-  position: relative;
-  z-index: 1;
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 10px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  margin-top: 15px;
-}
-
-/* Animation للإشعارات (جديد) */
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  header { padding: 10px 15px; }
-  header h1 { font-size: 20px; }
-  #back-btn { font-size: 18px; padding: 8px; }
-  main { padding: 10px; }
-  .wrap { padding: 10px; margin: 0; }
-  .cols-2, .cols-3 { grid-template-columns: 1fr; }
-  .list-item { flex-direction: column; gap: 5px; }
-  .animated-phrase { font-size: 14px; padding: 8px 15px; }
-  .checkbox-group, .radio-group { flex-direction: column; align-items: flex-start; }
-  .wizard-controls { flex-direction: column; gap: 10px; }
-  .btn-wizard { width: 100%; justify-content: center; }
-  footer { padding: 10px; font-size: 12px; }
-  .modal-content { width: 95%; margin: 10% auto; }
-  .questions-controls { flex-direction: column; gap: 10px; text-align: center; }
-}
-
-/* Dark Mode تحسينات إضافية */
-[data-theme="dark"] .header-card,
-[data-theme="dark"] .step-card,
-[data-theme="dark"] .info-boxes div,
-[data-theme="dark"] .card {
-  background: var(--card-bg);
-}
-
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
-  background: var(--card-bg) !important;
-  color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder {
-  color: var(--secondary-text) !important;
-}
-
-[data-theme="dark"] input::-webkit-input-placeholder,
-[data-theme="dark"] textarea::-webkit-input-placeholder {
-  color: var(--secondary-text) !important;
-}
-
-[data-theme="dark"] input:-ms-input-placeholder,
-[data-theme="dark"] textarea:-ms-input-placeholder {
-  color: var(--secondary-text) !important;
-}
-
-[data-theme="dark"] input[readonly],
-[data-theme="dark"] input[readonly="readonly"] {
-  background: var(--card-bg) !important;
-  color: var(--text-color) !important;
-}
-
-[data-theme="dark"] #back-btn {
-  background: var(--secondary-button-bg);
-  color: var(--text-color);
-}
-
-[data-theme="dark"] #back-btn:hover {
-  background: var(--secondary-button-hover);
-}
-
-[data-theme="dark"] .btn-secondary { color: var(--text-color); }
-
-/* تحسينات إضافية للجدول في step9 لتجنب تخريب الهيدر والفوتر */
-#resultsTable {
-  position: relative;
-  z-index: 1;
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 10px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  margin-top: 15px;
-}
-
-#resultsTable table {
-  width: 100%;
-  border-collapse: collapse;
-  direction: rtl;
-  font-family: 'Tajawal', sans-serif;
-}
-
-#resultsTable table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--primary-blue);
-}
-
-#resultsTable table thead th {
-  border: 1px solid var(--border-color);
-  padding: 12px;
-  text-align: right;
-  color: white;
-}
-
-#resultsTable table tbody tr {
-  background: var(--bg-color);
-}
-
-#resultsTable table tbody td {
-  border: 1px solid var(--border-color);
-  padding: 10px;
-  vertical-align: top;
-}
-
-#resultsTable table tbody tr:nth-child(even) {
-  background: var(--card-bg);
-}
-
-[data-theme="dark"] #resultsTable table {
-  background: var(--card-bg);
-}
-
-[data-theme="dark"] #resultsTable table tbody tr {
-  background: var(--card-bg);
-}
-
-[data-theme="dark"] #resultsTable table tbody tr:nth-child(even) {
-  background: var(--bg-color);
-}
-
-#summaryContent {
-  max-height: 60vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-
-#summaryContent::-webkit-scrollbar {
-  width: 6px;
-}
-
-#summaryContent::-webkit-scrollbar-track {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-
-#summaryContent::-webkit-scrollbar-thumb {
-  background: var(--primary-blue);
-  border-radius: 3px;
-}
-
-[data-theme="dark"] #summaryContent::-webkit-scrollbar-track {
-  background: var(--border-color);
-}
-
-#resultsTable::-webkit-scrollbar {
-  width: 8px;
-}
-
-#resultsTable::-webkit-scrollbar-track {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-#resultsTable::-webkit-scrollbar-thumb {
-  background: var(--primary-blue);
-  border-radius: 4px;
-}
   
-/* ===== Mobile cards replacement for the diagnoses table ===== */
-.diagnosis-cards {
-  display: grid;
-  gap: 12px;
-}
-.diagnosis-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  direction: rtl;
-}
-.diagnosis-card .card-title {
-  font-size: 16px;
-  color: var(--primary-blue);
-  margin: 0 0 8px;
-}
-.diagnosis-card .card-row {
-  margin-top: 8px;
-  font-size: 14px;
-  color: var(--text-color);
-}
+    /* النص المتحرك (محسن مع تأثير shimmer كما في xray السابق) */
+    .animated-card {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--animated-text-color);
+      min-height: 40px;
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(96, 165, 250, 0.05));
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
 
-/* On small screens hide old <table> inside #resultsTable to avoid duplicate visuals */
-@media (max-width: 768px) {
-  #resultsTable table { display: none; }
-}
+    [data-theme="dark"] .animated-card {
+      background: linear-gradient(135deg, rgba(165, 180, 252, 0.1), rgba(165, 180, 252, 0.05));
+    }
 
-</style>
+    .animated-card.show {
+      opacity: 1;
+      animation: fadeGlow 3s ease-in-out infinite;
+    }
+
+    .animated-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(96, 165, 250, 0.3), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s linear infinite;
+      opacity: 0;
+    }
+
+    .animated-card.show::before {
+      opacity: 1;
+    }
+
+    @keyframes fadeGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); text-shadow: 0 0 5px rgba(96, 165, 250, 0.3); }
+      50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 20px rgba(96, 165, 250, 0.6); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .fade {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .fade.show {
+      opacity: 1;
+    }
+
+    /* الصندوقين (كما في xray السابق، مع card wrapper) */
+    .info-cards {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .small-card {
+      flex: 1;
+      text-align: center;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow-medium);
+      padding: 12px;
+      font-size: 14px;
+      color: var(--secondary-text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .small-card h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .small-card i {
+      font-size: 1.2rem;
+      color: var(--icon-color);
+    }
+
+    /* رفع الملفات (محسن مع drag & drop) */
+    .upload-area {
+      border: 2px dashed var(--upload-border);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--upload-bg);
+      color: var(--secondary-text);
+      transition: background 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .upload-area i {
+      font-size: 3rem;
+      color: var(--icon-color);
+      transition: color 0.3s ease;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      background: var(--upload-hover-bg);
+      border-color: var(--upload-hover-border);
+    }
+
+    .upload-area:hover i, .upload-area.dragover i {
+      color: var(--upload-hover-border);
+      transform: scale(1.1);
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .file-name {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .preview-container {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .preview-container img {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 10px;
+    }
+
+    /* الحقول (كما في xray السابق) */
+    input, select, textarea {
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--card-bg);
+      color: var(--text-color);
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-blue);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      background: var(--button-bg);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    button:hover:not(:disabled), button:not(:disabled):hover {
+      background: var(--button-hover);
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button i {
+      font-size: 1.1rem;
+    }
+
+    /* التقرير (مع دعم للثقة كما في xray) */
+    #response {
+      margin-top: 15px;
+      display: none;
+    }
+
+    #response.show {
+      display: block;
+    }
+
+    .result-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px var(--shadow-medium);
+      transition: background 0.3s ease;
+    }
+
+    .result-card h3 {
+      margin-top: 0;
+      color: var(--primary-blue);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .result-card h3 i {
+      font-size: 1.3rem;
+      color: var(--icon-color);
+    }
+
+    .result-card p strong i {
+      font-size: 1rem;
+      margin-left: 0.3rem;
+      color: var(--icon-color);
+    }
+
+    .conf-high { color: var(--conf-high); font-weight: bold; }
+    .conf-moderate { color: var(--conf-moderate); font-weight: bold; }
+    .conf-low { color: var(--conf-low); font-weight: bold; }
+
+    .action-buttons { justify-content: center;
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .action-btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    .copy-btn {
+      background: #2980b9;
+    }
+
+    .copy-btn:hover {
+      background: #3498db;
+    }
+
+    .print-btn {
+      background: #27ae60;
+    }
+
+    .print-btn:hover {
+      background: #2ecc71;
+    }
+
+    /* Responsive للـRTL (مع تعديل للهيدر والفوتر) */
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; }
+      header h1 { font-size: 20px; }
+      #back-btn { font-size: 18px; padding: 8px 12px; }
+      .info-cards {
+        flex-direction: column;
+      }
+
+      .container {
+        padding: 10px 10px;
+      }
+
+      button {
+        gap: 0.3rem;
+      }
+
+      .upload-area i {
+        font-size: 2.5rem;
+      }
+
+      footer { padding: 10px; font-size: 12px; }
+    }
+
+    /* Dark Mode تحسينات إضافية للهيدر والفوتر (مدمج من dashboard) */
+    [data-theme="dark"] input,
+    [data-theme="dark"] select,
+    [data-theme="dark"] textarea {
+      background: var(--card-bg) !important;
+      color: var(--text-color) !important;
+      border-color: var(--border-color) !important;
+    }
+
+    [data-theme="dark"] input::placeholder,
+    [data-theme="dark"] textarea::placeholder {
+      color: var(--secondary-text) !important;
+    }
+
+    [data-theme="dark"] input::-webkit-input-placeholder,
+    [data-theme="dark"] textarea::-webkit-input-placeholder {
+      color: var(--secondary-text) !important;
+    }
+
+    [data-theme="dark"] input:-ms-input-placeholder,
+    [data-theme="dark"] textarea:-ms-input-placeholder {
+      color: var(--secondary-text) !important;
+    }
+
+    [data-theme="dark"] input[readonly],
+    [data-theme="dark"] input[readonly="readonly"] {
+      background: var(--card-bg) !important;
+      color: var(--text-color) !important;
+    }
+
+    [data-theme="dark"] #back-btn {
+      background: var(--secondary-button-bg);
+      color: var(--text-color);
+    }
+
+    [data-theme="dark"] #back-btn:hover {
+      background: var(--secondary-button-hover);
+    }
+  </style>
 </head>
-<body data-theme="light">
-<!-- الهيدر -->
+<body data-theme="light"> <!-- افتراضي light، يتغير تلقائيًا -->
+<!-- الهيدر (مدمج ومعدل من dashboard.html) -->
 <header>
 <div class="logo">
 <h1><i class="fas fa-stethoscope"></i> طبيبي</h1>
 <small>أول تطبيق ذكاء اصطناعي طبي في سوريا</small>
 </div>
-<button aria-label="رجوع" id="back-btn">
+<button id="back-btn">
 <i class="fas fa-arrow-left"></i>
 </button>
 </header>
-<main>
+<div class="container">
 <div class="wrap">
-<!-- Header-card -->
-<div class="header-card">
-<h1><i class="fas fa-user-md"></i> القصة السريرية العامة (باطنية/جراحة)</h1>
-<div class="animated-phrase" id="animatedPhrase">
-<!-- النص المتحرك سيتم إضافته بالـ JS -->
+<div class="card">
+<h1><i class="fas fa-x-ray"></i> تحليل الصور الشعاعية و التقارير الطبية</h1>
+<!-- النص المتحرك متعدد المقاطع -->
+<div class="card animated-card fade" id="animatedCard"></div>
+</div>
+<!-- نص متحرك (محسن مع shimmer effect كما في xray) -->
+<!-- الصندوقين (مثل xray، مع تحديث الوقت والعداد) -->
+<div class="card">
+<div class="info-cards">
+<div class="small-card">
+<h4><i class="fas fa-clock"></i> تاريخ اليوم</h4>
+<div id="dateTime"></div>
+</div>
+<div class="small-card">
+<h4><i class="fas fa-file-medical"></i> عدد التقارير</h4>
+<div id="reportCount">0</div>
 </div>
 </div>
-<!-- شريط التقدم -->
-<div class="progress-bar">
-<div class="progress-fill" id="progressFill"></div>
 </div>
-<!-- الخطوات -->
-<!-- Step 1: الملف الشخصي -->
-<div class="step-card active" id="step1">
-<h2><i class="fas fa-user"></i> 1. الملف الشخصي للمريض</h2>
-<div class="grid cols-2">
-<div>
-<label>الاسم الكامل</label>
-<input id="fullName" placeholder="أدخل الاسم الكامل" type="text"/>
+<!-- رفع الملفات (مع دعم drag & drop) -->
+<div class="card">
+<div class="upload-area" id="uploadArea">
+<i class="fas fa-cloud-upload-alt"></i>
+<p>انقر لتحميل الملف أو اسحبه هنا</p>
+<input accept=".jpg,.jpeg,.png,.dcm" id="fileInput" type="file" multiple/>
 </div>
-<div>
-<label>الجنس *</label>
-<select id="gender" required="">
-<option value="">اختر</option>
-<option value="ذكر">ذكر</option>
-<option value="أنثى">أنثى</option>
+<div class="file-name" id="fileName"></div>
+<div class="preview-container" id="previewContainer"><img id="imagePreview" style="display:none;"/></div>
+</div>
+<!-- تفاصيل الفحص (كما في xray) -->
+<div class="card">
+<h3><i class="fas fa-stethoscope"></i> تفاصيل الفحص</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<select id="examTypeSelect">
+<option value="">اختر نوع الفحص</option>
+<option value="X-ray">X-ray</option>
+<option value="MRI">MRI</option>
+<option value="CT">CT</option>
+<option value="ECG">ECG</option>
+<option value="Laboratory">Laboratory Test</option>
 </select>
+<input id="ageInput" min="0" placeholder="العمر" type="number"/>
 </div>
-</div>
-<div class="grid cols-2">
-<div>
-<label>العمر *</label>
-<input id="age" min="0" placeholder="أدخل العمر" required="" type="number"/>
-</div>
-<div>
-<label>الحالة الاجتماعية</label>
-<select id="maritalStatus" onchange="toggleChildren()">
-<option value="">اختر</option>
-<option value="متزوج">متزوج</option>
-<option value="أعزب">أعزب</option>
-<option value="مطلق">مطلق</option>
-<option value="أرمل">أرمل</option>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+<select id="genderSelect">
+<option value="">الجنس</option>
+<option value="Male">ذكر</option>
+<option value="Female">أنثى</option>
 </select>
+<input id="reasonInput" placeholder="سبب الفحص" type="text"/>
+</div>
+<textarea id="historyInput" placeholder="أعراض أو تاريخ مرضي إضافي" style="margin-top:12px;"></textarea>
+<div style="margin-top:12px;text-align:center;">
+<button disabled="" id="analyzeBtn"><i class="fas fa-play-circle"></i> بدء التحليل</button>
 </div>
 </div>
-<div class="grid cols-2">
-<div id="childrenField" style="display:none;">
-<label>عدد الأولاد</label>
-<input id="childrenCount" min="0" placeholder="أدخل العدد" type="number"/>
-</div>
-<div>
-<label>عنوان السكن</label>
-<textarea id="address" placeholder="أدخل عنوان السكن"></textarea>
-</div>
-</div>
-<div>
-<label>المهنة</label>
-<input id="occupation" placeholder="أدخل المهنة" type="text"/>
-</div>
-</div>
-<!-- Step 2: الشكاية الرئيسية -->
-<div class="step-card" id="step2">
-<h2><i class="fas fa-exclamation-triangle"></i> 2. الشكاية الرئيسية وتفصيلها</h2>
-<div class="list-section" id="complaintsList"></div>
-<button class="btn add-btn" onclick="openSymptomsLibrary()">
-<i class="fas fa-book-medical"></i> استعراض الأعراض من الموسوعة
-        </button>
-</div>
-<!-- Step 3: السوابق المرضية والجراحية -->
-<div class="step-card" id="step3">
-<h2><i class="fas fa-history"></i> 3. السوابق المرضية والجراحية</h2>
-<h3>السوابق المرضية</h3>
-<div class="list-section" id="medicalHistoryList"></div>
-<button class="btn add-btn" onclick="addMedicalHistory()"><i class="fas fa-plus"></i> إضافة سابقة مرضية</button>
-<h3>السوابق الجراحية</h3>
-<div class="list-section" id="surgicalHistoryList"></div>
-<button class="btn add-btn" onclick="addSurgicalHistory()"><i class="fas fa-plus"></i> إضافة سابقة جراحية</button>
-</div>
-<!-- Step 4: السوابق الدوائية والتحسسية -->
-<div class="step-card" id="step4">
-<h2><i class="fas fa-pills"></i> 4. السوابق الدوائية والتحسسية</h2>
-<h3>السوابق الدوائية</h3>
-<div class="list-section" id="drugHistoryList"></div>
-<button class="btn add-btn" onclick="addDrugHistory()"><i class="fas fa-plus"></i> إضافة سابقة دوائية</button>
-<h3>السوابق التحسسية</h3>
-<div class="list-section" id="allergyHistoryList"></div>
-<button class="btn add-btn" onclick="addAllergyHistory()"><i class="fas fa-plus"></i> إضافة تحسس</button>
-</div>
-<!-- Step 5: السوابق العائلية والعادات -->
-<div class="step-card" id="step5">
-<h2><i class="fas fa-users"></i> 5. السوابق العائلية والعادات والغرائز</h2>
-<h3>السوابق العائلية</h3>
-<div class="list-section" id="familyHistoryList"></div>
-<button class="btn add-btn" onclick="addFamilyHistory()"><i class="fas fa-plus"></i> إضافة سابقة عائلية</button>
-<h3>العادات والغرائز</h3>
-<div class="grid cols-3">
-<div>
-<label>التدخين</label>
-<select id="smoking" onchange="toggleHabitDetails('smokingDetails')">
-<option value="">اختر</option>
-<option value="لا">لا</option>
-<option value="سابق">سابق</option>
-<option value="حالي">حالي</option>
-</select>
-<div class="conditional" id="smokingDetails">
-<label>المدة والكمية</label>
-<input id="smokingQuantity" placeholder="مثال: 10 سجائر/يوم لـ5 سنوات" type="text"/>
-</div>
-</div>
-<div>
-<label>الكحول</label>
-<select id="alcohol" onchange="toggleHabitDetails('alcoholDetails')">
-<option value="">اختر</option>
-<option value="لا">لا</option>
-<option value="سابق">سابق</option>
-<option value="حالي">حالي</option>
-</select>
-<div class="conditional" id="alcoholDetails">
-<label>المدة والكمية</label>
-<input id="alcoholQuantity" placeholder="مثال: كأس/أسبوع لـ3 سنوات" type="text"/>
-</div>
-</div>
-<div>
-<label>المخدرات</label>
-<select id="drugs" onchange="toggleHabitDetails('drugsDetails')">
-<option value="">اختر</option>
-<option value="لا">لا</option>
-<option value="سابق">سابق</option>
-<option value="حالي">حالي</option>
-</select>
-<div class="conditional" id="drugsDetails">
-<label>المدة والكمية</label>
-<input id="drugsQuantity" placeholder="مثال: نوع، كمية، مدة" type="text"/>
+<!-- التقرير -->
+<div id="response">
+<div class="result-card" id="card-meta"></div>
+<div class="result-card" id="card-findings"></div>
+<div class="result-card" id="card-differential"></div>
+<div class="action-buttons">
+<button class="action-btn copy-btn" id="copyBtn"><i class="fas fa-copy"></i> نسخ</button>
 </div>
 </div>
 </div>
 </div>
-<!-- Step 6: التقارير الطبية -->
-<div class="step-card" id="step6">
-<h2><i class="fas fa-file-medical"></i> 6. التقارير الطبية</h2>
-<div class="list-section" id="reportsList"></div>
-<button class="btn add-btn" onclick="addReport()"><i class="fas fa-plus"></i> إضافة تقرير</button>
-</div>
-<!-- Step 7: العلامات الحيوية -->
-<div class="step-card" id="step7">
-<h2><i class="fas fa-heartbeat"></i> 7. العلامات الحيوية</h2>
-<div class="grid cols-2">
-<div>
-<label>هل ترغب بإدخال العلامات الحيوية؟ *</label>
-<select id="vitalsOptIn" onchange="toggleVitalsSection()" required="">
-<option value="">اختر</option>
-<option value="نعم">نعم</option>
-<option value="لا">لا</option>
-</select>
-</div>
-</div>
-<div class="conditional" id="vitalsSection" style="display:none; margin-top: 20px;">
-<div class="grid cols-2">
-<div>
-<label>الضغط الشرياني (مثال: 120/80)</label>
-<input id="bloodPressure" placeholder="أدخل القيمة" type="text"/>
-</div>
-<div>
-<label>النبض (بالدقيقة)</label>
-<input id="pulse" min="0" placeholder="أدخل النبض" type="number"/>
-</div>
-</div>
-<div class="grid cols-2">
-<div>
-<label>الحرارة (درجة مئوية)</label>
-<input id="temperature" min="0" placeholder="أدخل الحرارة" step="0.1" type="number"/>
-</div>
-<div>
-<label>معدل التنفس (بالدقيقة)</label>
-<input id="respiratoryRate" min="0" placeholder="أدخل التنفس" type="number"/>
-</div>
-</div>
-<div class="grid cols-2">
-<div>
-<label>الوزن (كغ)</label>
-<input id="weight" min="0" oninput="calculateBMI()" placeholder="أدخل الوزن" type="number"/>
-</div>
-<div>
-<label>الطول (سم)</label>
-<input id="height" min="0" oninput="calculateBMI()" placeholder="أدخل الطول" type="number"/>
-</div>
-</div>
-<div>
-<label>مؤشر كتلة الجسم (BMI)</label>
-<input id="bmi" placeholder="سيتم الحساب تلقائيًا" readonly="" type="number"/>
-</div>
-</div>
-</div>
-<!-- Step 8: ملخص القصة السريرية (جديد) -->
-<div class="step-card" id="step8">
-<h2><i class="fas fa-file-alt"></i> 8. ملخص القصة السريرية</h2>
-<div id="summaryContent" style="padding: 20px; background: var(--card-bg); border-radius: var(--border-radius); border: 1px solid var(--border-color); margin-bottom: 20px; direction: rtl; font-size: 16px; line-height: 1.6;">
-<!-- الملخص سيتم إضافته هنا بواسطة JS -->
-<p>لقد أكملت إدخال جميع التفاصيل. يمكنك مراجعة الملخص أدناه:</p>
-<div id="generatedSummary"></div>
-</div>
-</div>
-<!-- Step 9: قسم التشخيصات (جديد، يحتوي على الجدول) -->
-<div class="step-card" id="step9">
-<h2><i class="fas fa-table"></i> 9. التشخيصات التفريقية</h2>
-<div id="resultsTable" style="
-      margin: 15px 0;
-      position: relative;
-      z-index: 1;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 10px;
-      background: var(--card-bg);
-    ">
-<!-- الجدول سيتم إضافته هنا بواسطة JS -->
-</div>
-<!-- <div style="text-align: center; margin-top: 20px;">
-          <button class="btn" onclick="resetForm()" style="font-size: 18px; padding: 15px 30px;">
-            <i class="fas fa-plus"></i> بدء قصة سريرية جديدة
-          </button>
-        </div> -->
-</div>
-<!-- أزرار التنقل -->
-<div class="wizard-controls" id="wizardControls">
-<button class="btn btn-secondary btn-wizard" id="prevBtn" onclick="prevStep()" style="display: none;">
-<i class="fas fa-arrow-right"></i> السابق
-        </button>
-<button class="btn btn-wizard" id="nextBtn" onclick="nextStep()">
-<i class="fas fa-arrow-left"></i> التالي
-        </button>
-</div>
-<!-- أزرار الخطوة 8 (ملخص) -->
-<div class="wizard-controls" id="summaryControls" style="display: none;">
-<button class="btn btn-secondary btn-wizard" onclick="prevStep()">
-<i class="fas fa-arrow-right"></i> السابق
-        </button>
-<button class="btn btn-wizard" id="sendBtn" onclick="sendFormToAI()">
-<i class="fas fa-paper-plane"></i> إرسال القصة للتشخيص
-        </button>
-</div>
-<!-- أزرار الخطوة 9 (تشخيصات) -->
-<div class="wizard-controls" id="diagnosisControls" style="display: none;">
-<button class="btn btn-secondary btn-wizard" onclick="prevStep()">
-<i class="fas fa-arrow-right"></i> السابق
-        </button>
-<button class="btn btn-wizard" onclick="resetForm()">
-<i class="fas fa-plus"></i> بدء قصة سريرية جديدة
-        </button>
-</div>
-<!-- قسم عرض النتائج (تم نقله إلى step9) -->
-<div id="resultsSection" style="display: none;"></div>
-</div>
-</main>
-<!-- الفوتر -->
+<!-- الفوتر (مدمج من dashboard.html) -->
 <footer>© جميع الحقوق محفوظة لـ Kasp-ai</footer>
-<!-- نافذة الموسوعة -->
-<div class="modal" id="symptomsModal">
-<div class="modal-content">
-<div class="modal-header">
-<h3><i class="fas fa-book-medical"></i> موسوعة الأعراض</h3>
-<span class="close" onclick="closeSymptomsModal()">×</span>
-</div>
-<div class="modal-body">
-<div class="search-container">
-<input id="symptomSearch" onkeyup="filterSymptoms()" placeholder="ابحث عن عرض..." type="text"/>
-</div>
-<p>عدد الأعراض: <span id="symptomsCount">0</span></p>
-<div class="symptoms-list" id="symptomsList">
-<!-- سيتم ملء الأعراض هنا -->
-</div>
-</div>
-</div>
-</div>
-<!-- نافذة الأسئلة التفاعلية -->
-<div class="modal" id="questionsModal">
-<div class="modal-content">
-<div class="modal-header">
-<h3><i class="fas fa-question-circle"></i> أسئلة تشخيصية: <span id="symptomTitle">العرض</span></h3>
-<span class="close" onclick="closeQuestionsModal()">×</span>
-</div>
-<div class="modal-body">
-<div class="symptom-description" id="symptomDescription"></div>
-<div class="questions-container" id="questionsContainer">
-<!-- سيتم ملء الأسئلة هنا -->
-</div>
-<div class="questions-controls">
-<button class="btn btn-secondary" onclick="closeQuestionsModal()">
-<i class="fas fa-times"></i> إلغاء
-          </button>
-<button class="btn" onclick="addSymptomWithAnswers()">
-<i class="fas fa-check"></i> إضافة الشكاية مع الإجابات
-          </button>
-</div>
-</div>
-</div>
-</div>
 <script>
-// معالج زر الرجوع وتهيئة Puter
+    // --- Gemini API Integration ---
+    const API_KEY = "AIzaSyCTpQOvoMLUb9mX1dos-zw0uLqKjs5ADTE";
+    async function analyzeWithGemini(uploadedFile, prompt) {
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onload = async () => {
+          try {
+            const base64Image = reader.result.split(',')[1];
+            const body = {
+              contents: [{
+                parts: [
+                  { inline_data: { mime_type: uploadedFile.type, data: base64Image } },
+                  { text: prompt }
+                ]
+              }]
+            };
 
-// ===== Puter per-browser user key (auto-generated, stored in localStorage) =====
-let userKey = localStorage.getItem('userKey');
-if (!userKey) {
-  userKey = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
-  localStorage.setItem('userKey', userKey);
-}
-console.log('🔑 معرف المستخدم لهذا المتصفح (userKey):', userKey);
-// ===========================================================================
-document.addEventListener('DOMContentLoaded', async () => {
-  const backBtn = document.getElementById('back-btn');
-  if (backBtn) {
-    backBtn.addEventListener('click', () => {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = 'story.html';
-      }
-    });
-  }
+            const response = await fetch(
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=" + API_KEY,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+              }
+            );
 
-  // انتظار تحميل Puter.js الكامل
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // تحميل التاريخ السابق
-  loadPreviousDiagnoses();
-
-  // تهيئة
-  updateProgress();
-  showStep(1);
-
-  // تحقق إضافي للزر
-  await checkForSavedDataAndAddButton();
-  console.log('تم التحميل والتحقق من Puter KV');
-});
-
-// النص المتحرك
-const phrases = [
-  "<i class='fas fa-user-md'></i> تشخيص دقيق للأمراض الداخلية والجراحية",
-  "<i class='fas fa-heartbeat'></i> تتبع شامل للعلامات الحيوية",
-  "<i class='fas fa-stethoscope'></i> قصة سريرية متكاملة للرعاية الأولية",
-  "<i class='fas fa-shield-alt'></i> حماية صحتك من خلال البيانات الدقيقة"
-];
-let phraseIndex = 0;
-const animatedPhrase = document.getElementById("animatedPhrase");
-function showPhrase() {
-  animatedPhrase.classList.remove("show");
-  setTimeout(() => {
-    animatedPhrase.innerHTML = phrases[phraseIndex];
-    animatedPhrase.classList.add("show");
-    phraseIndex = (phraseIndex + 1) % phrases.length;
-  }, 500);
-}
-setInterval(showPhrase, 4000);
-showPhrase();
-
-// Wizard Logic
-const totalSteps = 9;
-let currentStep = 1;
-let analysisCompleted = false;
-
-function updateProgress() {
-  const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-  document.getElementById('progressFill').style.width = progress + '%';
-}
-
-function showStep(step) {
-  for (let i = 1; i <= totalSteps; i++) {
-    const stepEl = document.getElementById(`step${i}`);
-    if (stepEl) stepEl.classList.remove('active');
-  }
-  const targetStep = document.getElementById(`step${step}`);
-  if (targetStep) targetStep.classList.add('active');
-
-  currentStep = step;
-
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const wizardControls = document.getElementById('wizardControls');
-  const summaryControls = document.getElementById('summaryControls');
-  const diagnosisControls = document.getElementById('diagnosisControls');
-
-  wizardControls.style.display = 'none';
-  summaryControls.style.display = 'none';
-  diagnosisControls.style.display = 'none';
-
-  if (step === 1) {
-    prevBtn.style.display = 'none';
-    wizardControls.style.display = 'flex';
-    nextBtn.innerHTML = '<i class="fas fa-arrow-left"></i> التالي';
-    nextBtn.onclick = nextStep;
-    checkForSavedDataAndAddButton();
-  } else if (step === 7) {
-    prevBtn.style.display = 'inline-flex';
-    wizardControls.style.display = 'flex';
-    nextBtn.innerHTML = '<i class="fas fa-arrow-left"></i> التالي';
-    nextBtn.onclick = nextStep;
-  } else if (step === 8) {
-    prevBtn.style.display = 'inline-flex';
-    summaryControls.style.display = 'flex';
-  } else if (step === 9) {
-    prevBtn.style.display = 'none';
-    diagnosisControls.style.display = 'flex';
-  } else {
-    prevBtn.style.display = 'inline-flex';
-    wizardControls.style.display = 'flex';
-    nextBtn.innerHTML = '<i class="fas fa-arrow-left"></i> التالي';
-    nextBtn.onclick = nextStep;
-  }
-
-  if (step === 8) generateSummary();
-  updateProgress();
-}
-
-function validateCurrentStep() {
-  if (currentStep === 1) {
-    if (!document.getElementById('gender').value.trim() || !document.getElementById('age').value.trim()) {
-      alert('يرجى ملء الجنس والعمر.');
-      return false;
+            const data = await response.json();
+            if (data?.candidates?.length) {
+              resolve(data.candidates[0].content.parts.map(p => p.text || "").join("\n"));
+            } else {
+              reject(new Error("لم يتم الحصول على استجابة صالحة من السيرفر"));
+            }
+          } catch (err) {
+            reject(err);
+          }
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(uploadedFile);
+      });
     }
-  }
-  if (currentStep === 7) {
-    if (!document.getElementById('vitalsOptIn').value.trim()) {
-      alert('يرجى تحديد ما إذا كنت ترغب بإدخال العلامات الحيوية.');
-      return false;
+
+
+    // كود الـDark Mode التلقائي (كما في xray)
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
     }
-  }
-  return true;
-}
 
-function nextStep() {
-  if (validateCurrentStep() && currentStep < 8) showStep(currentStep + 1);
-}
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(prefersDark ? 'dark' : 'light');
 
-function prevStep() {
-  if (currentStep > 1) showStep(currentStep - 1);
-}
-
-// تحقق من البيانات وإضافة الزر
-async function checkForSavedDataAndAddButton() {
-  console.log('بدء التحقق من Puter KV...');
-  if (typeof puter === 'undefined' || !puter.kv) {
-    console.warn('Puter.js غير متاحة');
-    return;
-  }
-  try {
-    const keys = await puter.kv.list();
-    console.log('الكيز الموجودة:', keys);
-    const hasDiagnoses = keys.some(key => key.startsWith(`${userKey}_diagnosis_`));
-    console.log('هل توجد تشخيصات؟', hasDiagnoses);
-    const step1 = document.getElementById('step1');
-    let historyBtn = document.getElementById('historyBtn');
-    if (hasDiagnoses && !historyBtn) {
-      historyBtn = document.createElement('button');
-      historyBtn.id = 'historyBtn';
-      historyBtn.className = 'btn btn-secondary add-btn';
-      historyBtn.innerHTML = '<i class="fas fa-history"></i> عرض التشخيصات السابقة';
-      historyBtn.onclick = openHistoryModal;
-      step1.appendChild(historyBtn);
-      console.log('تم إضافة الزر');
-    } else if (!hasDiagnoses && historyBtn) {
-      historyBtn.remove();
-      console.log('تم إزالة الزر');
-    }
-  } catch (error) {
-    console.error('خطأ في list():', error);
-    alert('خطأ في الوصول إلى قاعدة البيانات: ' + error.message);
-  }
-}
-
-// resetForm
-async function resetForm() {
-  if (analysisCompleted) {
-    const currentStoryData = collectFullStoryData();
-    const currentDiagnoses = collectCurrentDiagnoses();
-    if (currentStoryData && currentDiagnoses && currentDiagnoses.length > 0) {
-      const timestamp = new Date().toLocaleString('ar-SA');
-      const key = `${userKey}_diagnosis_${Date.now()}`;
-
-      const savedData = {
-        date: timestamp,
-        story: currentStoryData,
-        summary: collectFormSummary(false),
-        diagnoses: currentDiagnoses
-      };
-
-      try {
-        await puter.kv.set(key, JSON.stringify(savedData));
-        console.log('تم الحفظ، الكي:', key);
-        alert('تم الحفظ بنجاح! الكي: ' + key + '. سيظهر الزر بعد التحقق.');
-        await checkForSavedDataAndAddButton(); // تحقق فوري
-      } catch (error) {
-        console.error('خطأ في set():', error);
-        alert('خطأ في الحفظ: ' + error.message);
-      }
-    }
-  }
-  location.reload();
-}
-
-// جمع البيانات الكاملة
-function collectFullStoryData() {
-  const data = collectFormData();
-  const complaints = Array.from(document.querySelectorAll('#complaintsList .list-item input')).map(input => input.value).filter(v => v);
-  const medical = [];
-  const medicalInputs = document.querySelectorAll('#medicalHistoryList .list-item input');
-  for (let i = 0; i < medicalInputs.length; i += 2) {
-    medical.push({
-      disease: medicalInputs[i]?.value || '',
-      details: medicalInputs[i + 1]?.value || ''
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      applyTheme(e.matches ? 'dark' : 'light');
     });
-  }
-  const surgical = [];
-  const surgicalInputs = document.querySelectorAll('#surgicalHistoryList .list-item input');
-  for (let i = 0; i < surgicalInputs.length; i += 2) {
-    surgical.push({
-      surgery: surgicalInputs[i]?.value || '',
-      details: surgicalInputs[i + 1]?.value || ''
-    });
-  }
-  const drug = [];
-  const drugInputs = document.querySelectorAll('#drugHistoryList .list-item input');
-  for (let i = 0; i < drugInputs.length; i += 2) {
-    drug.push({
-      medication: drugInputs[i]?.value || '',
-      details: drugInputs[i + 1]?.value || ''
-    });
-  }
-  const allergy = [];
-  const allergyInputs = document.querySelectorAll('#allergyHistoryList .list-item input');
-  for (let i = 0; i < allergyInputs.length; i += 2) {
-    allergy.push({
-      allergen: allergyInputs[i]?.value || '',
-      details: allergyInputs[i + 1]?.value || ''
-    });
-  }
-  const family = [];
-  const familyInputs = document.querySelectorAll('#familyHistoryList .list-item input');
-  const familySelects = document.querySelectorAll('#familyHistoryList .list-item select');
-  for (let i = 0; i < familyInputs.length; i++) {
-    family.push({
-      disease: familyInputs[i]?.value || '',
-      relation: familySelects[i]?.value || ''
-    });
-  }
-  const reports = [];
-  const reportsContainers = document.querySelectorAll('#reportsList .list-item');
-  reportsContainers.forEach(container => {
-    const inputs = container.querySelectorAll('input');
-    const textarea = container.querySelector('textarea');
-    reports.push({
-      type: inputs[0]?.value || '',
-      results: textarea?.value || '',
-      date: inputs[2]?.value || inputs[1]?.value || ''  // تاريخ في input[2] أو [1]
-    });
-  });
 
-  return { ...data, complaints, medicalHistory: medical, surgicalHistory: surgical, drugHistory: drug, allergyHistory: allergy, familyHistory: family, reports };
-}
-
-function collectCurrentDiagnoses() {
-  // First try the table approach (desktop)
-  const table = document.querySelector('#resultsTable table');
-  if (table) {
-    const rows = table.querySelectorAll('tbody tr');
-    const diagnoses = [];
-    rows.forEach(row => {
-      const cells = row.querySelectorAll('td');
-      if (cells.length >= 4) {
-        diagnoses.push({
-          diagnosis: cells[0].textContent.trim(),
-          reasons: cells[1].textContent.trim(),
-          recommendedTests: cells[2].textContent.trim(),
-          probability: cells[3].textContent.trim()
+    // معالج زر الرجوع (جديد: يعود إلى الصفحة السابقة أو dashboard.html)
+    document.addEventListener('DOMContentLoaded', () => {
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          if (window.history.length > 1) {
+            window.history.back(); // إذا كان هناك تاريخ، ارجع للخلف
+          } else {
+            window.location.href = 'dashboard.html'; // إلا، اذهب إلى dashboard
+          }
         });
       }
     });
-    return diagnoses;
-  }
 
-  // Fallback: cards (mobile)
-  const cards = document.querySelectorAll('#resultsTable .diagnosis-card');
-  if (!cards || cards.length === 0) return [];
-  const diagnoses = [];
-  cards.forEach(card => {
-    const diag = {
-      diagnosis: card.querySelector('.card-title')?.textContent.trim() || card.dataset.diagnosis || '',
-      reasons: card.querySelector('.card-reasons')?.textContent.trim() || card.dataset.reasons || '',
-      recommendedTests: card.querySelector('.card-tests')?.textContent.trim() || card.dataset.tests || '',
-      probability: card.querySelector('.card-prob')?.textContent.trim() || card.dataset.probability || ''
-    };
-    diagnoses.push(diag);
-  });
-  return diagnoses;
-}
+    // النصوص المتحركة (محسنة مع الأيقونات والتأثير)
+    const messages = [
+      "<i class='fas fa-hospital' style='margin-left:0.5rem; color:var(--animated-text-color);'></i> مرحبا بك في قسم تحليل الصور الشعاعية و التقارير الطبية",
+      "<i class='fas fa-brain' style='margin-left:0.5rem; color:var(--animated-text-color);'></i> ارفع تقريرك أو صورتك ودع الذكاء الاصطناعي يقوم بتحليلها"
+    ];
+    let msgIndex = 0;
+    const animatedCard = document.getElementById("animatedCard");
 
-// تحميل التاريخ السابق
-async function loadPreviousDiagnoses() {
-  if (typeof puter !== 'undefined' && puter.kv) {
-    try {
-      await puter.kv.list();
-      console.log('Puter KV جاهزة');
-    } catch (error) {
-      console.error('خطأ في KV:', error);
+    function showMessage() {
+      animatedCard.classList.remove("show");
+      setTimeout(() => {
+        animatedCard.innerHTML = messages[msgIndex];
+        animatedCard.classList.add("show");
+        msgIndex = (msgIndex + 1) % messages.length;
+      }, 500);
     }
+    setInterval(showMessage, 4000);
+    showMessage();
+
+    // الوقت والتاريخ (تحديث كل ثانية)
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById("dateTime").textContent = now.toLocaleString('ar-EG');
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // عداد تقارير (يزيد عند نجاح التحليل)
+    let reportCount = 0;
+    function incrementReportCount() {
+      reportCount++;
+      document.getElementById("reportCount").textContent = reportCount;
+    }
+
+    // رفع وضغط الصور (مع drag & drop وإصلاح innerHTML)
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileName = document.getElementById('fileName');
+    const imagePreview = document.getElementById('imagePreview');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const previewContainer = document.getElementById('previewContainer');
+    let uploadedFiles = [];
+
+    // دعم drag & drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) processFile(file);
+    });
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
+
+    
+function processFiles(files) {
+  for (const file of files) {
+    if (!file.type.includes("image")) continue;
+    uploadedFiles.push(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.maxWidth = "150px";
+      img.style.maxHeight = "150px";
+      img.style.margin = "6px";
+      img.style.borderRadius = "10px";
+      previewContainer.appendChild(img);
+    };
+    reader.readAsDataURL(file);
   }
+
+  if (uploadedFiles.length > 0) {
+    const fileList = uploadedFiles.map(f => f.name).join("<br>");
+    fileName.innerHTML = `
+      <i class="fas fa-images" style="color:var(--icon-color); margin-left:0.5rem;"></i>
+      <strong>عدد الصور:</strong> ${uploadedFiles.length}<br>
+      <div style="font-size:13px; color:var(--secondary-text); margin-top:4px;">${fileList}</div>
+    `;
+  } else {
+    fileName.textContent = "";
+  }
+
+  analyzeBtn.disabled = uploadedFiles.length === 0;
+  fileInput.value = ""; // reset input
+  uploadArea.blur();    // prevent reopening file dialog
+  document.activeElement.blur(); // ensure blur on mobile
 }
 
-let historyModal = null;
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  processFiles(e.dataTransfer.files);
+});
+uploadArea.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => processFiles(e.target.files));
 
-// openHistoryModal (مُصحح مع for loop عادي وlogs)
-async function openHistoryModal() {
-  console.log('فتح modal التاريخ...'); // للتصحيح
-  if (!historyModal) {
-    historyModal = document.createElement('div');
-    historyModal.className = 'modal';
-    historyModal.id = 'historyModal';
-    historyModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-history"></i> التشخيصات السابقة</h3>
-          <span class="close" onclick="closeHistoryModal()">&times;</span>
-        </div>
-        <div class="modal-body">
-          <div id="historyList"></div>
-          <div class="questions-controls">
-            <button class="btn btn-secondary" onclick="closeHistoryModal()">
-              <i class="fas fa-times"></i> إغلاق
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(historyModal);
-    console.log('تم إنشاء الـ modal');
-  }
 
-  const historyList = document.getElementById('historyList');
-  historyList.innerHTML = '<p style="text-align: center;">جاري التحميل...</p>';
-  historyModal.style.display = 'block'; // تأكيد عرض الـ modal
-
-  try {
-    console.log('بدء تحميل الكيز...');
-    if (typeof puter !== 'undefined' && puter.kv) {
-      const keys = await puter.kv.list();
-      console.log('كل الكيز:', keys);
-      const diagnosisKeys = keys.filter(key => key.startsWith(`${userKey}_diagnosis_`)).sort().reverse();
-      console.log('كيز التشخيصات:', diagnosisKeys);
-
-      if (diagnosisKeys.length === 0) {
-        historyList.innerHTML = '<p style="text-align: center;">لا توجد تشخيصات سابقة محفوظة في قاعدة البيانات.</p>';
-        console.log('لا كيز موجودة');
+    // التحليل عبر puter.ai (مع streaming وإصلاحات)
+    analyzeBtn.addEventListener('click', async () => {
+      if (!uploadedFile) {
+        alert('⚠️حمّل ملف أولاً');
         return;
       }
 
-      let html = '<ul style="list-style: none; padding: 0;">';
-      for (let i = 0; i < diagnosisKeys.length; i++) { // for loop عادي لـ async
-        const key = diagnosisKeys[i];
-        console.log('تحميل الكي:', key);
-        try {
-          const savedJson = await puter.kv.get(key);
-          console.log('البيانات للكي ' + key + ':', savedJson);
-          if (savedJson) {
-            const savedData = JSON.parse(savedJson);
-            html += `
-              <li style="margin-bottom: 15px; padding: 15px; background: var(--card-bg); border-radius: var(--border-radius); border: 1px solid var(--border-color);">
-                <h4>تاريخ: ${savedData.date}</h4>
-                <p><strong>ملخص القصة:</strong> ${savedData.summary ? savedData.summary.substring(0, 200) + '...' : 'غير متوفر'}</p>
-                <button class="btn" onclick="showDiagnosisTable('${key}')"><i class="fas fa-table"></i> عرض الجدول</button>
-                <button class="btn btn-secondary" onclick="loadAndFillForm('${key}')"><i class="fas fa-edit"></i> ملء النموذج</button>
-                <button class="btn btn-secondary" onclick="deleteDiagnosis('${key}')"><i class="fas fa-trash"></i> حذف</button>
-              </li>
-            `;
-            console.log('تم إضافة سجل للكي:', key);
-          } else {
-            console.log('لا بيانات للكي:', key);
-          }
-        } catch (getError) {
-          console.error('خطأ في get() للكي ' + key + ':', getError);
-          html += `<li>خطأ في تحميل السجل: ${key}</li>`;
-        }
+      const reason = document.getElementById('reasonInput').value.trim();
+      const examType = document.getElementById('examTypeSelect').value;
+      const age = document.getElementById('ageInput').value.trim();
+      const gender = document.getElementById('genderSelect').value;
+      const history = document.getElementById('historyInput').value.trim();
+
+      if (!examType || !reason || !age || !gender) {
+        alert('⚠️ يرجى تعبئة الحقول المطلوبة');
+        return;
       }
-      html += '</ul>';
-      historyList.innerHTML = html;
-      console.log('تم تحميل القائمة بنجاح');
-    } else {
-      historyList.innerHTML = '<p style="text-align: center;">خطأ في الاتصال بقاعدة البيانات. Puter.js غير متاحة.</p>';
-      console.warn('Puter غير متاحة');
-    }
-  } catch (error) {
-    console.error('خطأ عام في openHistoryModal:', error);
-    historyList.innerHTML = '<p style="text-align: center;">حدث خطأ في التحميل: ' + error.message + '</p>';
-  }
-}
 
-function closeHistoryModal() {
-  if (historyModal) {
-    historyModal.style.display = 'none';
-    console.log('تم إغلاق الـ modal');
-  }
-}
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
+      const responseEl = document.getElementById('response');
+      responseEl.classList.add('show');
 
-// showDiagnosisTable
-async function showDiagnosisTable(key) {
-  console.log('عرض جدول للكي:', key);
-  try {
-    if (typeof puter !== 'undefined' && puter.kv) {
-      const savedJson = await puter.kv.get(key);
-      console.log('بيانات الجدول:', savedJson);
-      if (savedJson) {
-        const item = JSON.parse(savedJson);
-        if (!item || !item.diagnoses) {
-          alert('لا تشخيصات متاحة لهذا السجل.');
-          return;
-        }
+      // عرض المعلومات الأساسية
+      document.getElementById('card-meta').innerHTML = `
+        <h3><i class="fas fa-info-circle"></i> معلومات أساسية</h3>
+        <p><strong><i class="fas fa-x-ray"></i> نوع الفحص:</strong> ${examType}</p>
+        <p><strong><i class="fas fa-question-circle"></i> السبب:</strong> ${reason}</p>
+        <p><strong><i class="fas fa-birthday-cake"></i> العمر:</strong> ${age}</p>
+        <p><strong><i class="fas fa-venus-mars"></i> الجنس:</strong> ${gender}</p>
+        <p><strong><i class="fas fa-history"></i> تاريخ إضافي:</strong> ${history || 'لا يوجد'}</p>
+      `;
 
-        const tableModal = document.createElement('div');
-        tableModal.className = 'modal';
-        tableModal.innerHTML = `
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3>تشخيصات ${item.date}</h3>
-              <span class="close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
-            </div>
-            <div class="modal-body">
-              <div id="savedTable"></div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(tableModal);
-        tableModal.style.display = 'block';
+      document.getElementById('card-findings').innerHTML = "<h3><i class='fas fa-eye'></i> المشاهدات</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
+      document.getElementById('card-differential').innerHTML = "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3><p><i class='fas fa-spinner fa-spin'></i> جاري التحليل...</p>";
 
-        document.getElementById('savedTable').innerHTML = renderDiagnosesHtml(item.diagnoses);
-        console.log('تم عرض الجدول');
-      } else {
-        alert('لا بيانات متاحة لهذا السجل.');
-      }
-    } else {
-      alert('Puter.js غير متاحة لعرض الجدول.');
-    }
-  } catch (error) {
-    console.error('خطأ في showDiagnosisTable:', error);
-    alert('خطأ في عرض الجدول: ' + error.message);
-  }
-}
-
-// loadAndFillForm
-async function loadAndFillForm(key) {
-  console.log('ملء النموذج للكي:', key);
-  try {
-    if (typeof puter !== 'undefined' && puter.kv) {
-      const savedJson = await puter.kv.get(key);
-      if (savedJson) {
-        const savedData = JSON.parse(savedJson);
-        const storyData = savedData.story;
-
-        // ملء الحقول
-        document.getElementById('fullName').value = storyData.fullName || '';
-        document.getElementById('gender').value = storyData.gender || '';
-        document.getElementById('age').value = storyData.age || '';
-        document.getElementById('maritalStatus').value = storyData.maritalStatus || '';
-        document.getElementById('childrenCount').value = storyData.childrenCount || '';
-        document.getElementById('address').value = storyData.address || '';
-        document.getElementById('occupation').value = storyData.occupation || '';
-        document.getElementById('vitalsOptIn').value = storyData.vitalsOptIn || '';
-        document.getElementById('bloodPressure').value = storyData.bloodPressure || '';
-        document.getElementById('pulse').value = storyData.pulse || '';
-        document.getElementById('temperature').value = storyData.temperature || '';
-        document.getElementById('respiratoryRate').value = storyData.respiratoryRate || '';
-        document.getElementById('weight').value = storyData.weight || '';
-        document.getElementById('height').value = storyData.height || '';
-        document.getElementById('bmi').value = storyData.bmi || '';
-        document.getElementById('smoking').value = storyData.smoking || '';
-        document.getElementById('smokingQuantity').value = storyData.smokingQuantity || '';
-        document.getElementById('alcohol').value = storyData.alcohol || '';
-        document.getElementById('alcoholQuantity').value = storyData.alcoholQuantity || '';
-        document.getElementById('drugs').value = storyData.drugs || '';
-        document.getElementById('drugsQuantity').value = storyData.drugsQuantity || '';
-
-        // إعادة بناء القوائم
-        clearDynamicLists();
-        populateComplaints(storyData.complaints || []);
-        populateMedicalHistory(storyData.medicalHistory || []);
-        populateSurgicalHistory(storyData.surgicalHistory || []);
-        populateDrugHistory(storyData.drugHistory || []);
-        populateAllergyHistory(storyData.allergyHistory || []);
-        populateFamilyHistory(storyData.familyHistory || []);
-        populateReports(storyData.reports || []);
-
-        // تحديث conditionals
-        toggleChildren();
-        toggleVitalsSection();
-        if (storyData.smoking !== 'لا') toggleHabitDetails('smokingDetails');
-        if (storyData.alcohol !== 'لا') toggleHabitDetails('alcoholDetails');
-        if (storyData.drugs !== 'لا') toggleHabitDetails('drugsDetails');
-        calculateBMI();
-
-        closeHistoryModal();
-        showStep(1);
-        console.log('تم ملء النموذج بنجاح');
-        alert('تم ملء النموذج بالبيانات السابقة بنجاح!');
-      } else {
-        alert('لا بيانات لملء النموذج.');
-      }
-    } else {
-      alert('Puter.js غير متاحة لملء النموذج.');
-    }
-  } catch (error) {
-    console.error('خطأ في loadAndFillForm:', error);
-    alert('خطأ في ملء النموذج: ' + error.message);
-  }
-}
-
-// دوال القوائم (clearDynamicLists, populate*, add*Item)
-function clearDynamicLists() {
-  ['complaintsList', 'medicalHistoryList', 'surgicalHistoryList', 'drugHistoryList', 'allergyHistoryList', 'familyHistoryList', 'reportsList'].forEach(id => {
-    const container = document.getElementById(id);
-    if (container) container.innerHTML = '';
-  });
-  medicalHistoryCount = 0;
-  surgicalHistoryCount = 0;
-  drugHistoryCount = 0;
-  allergyHistoryCount = 0;
-  familyHistoryCount = 0;
-  reportsCount = 0;
-}
-
-function populateComplaints(complaints) {
-  complaints.forEach(complaint => {
-    const div = document.createElement('div');
-    div.className = 'list-item';
-    div.id = `complaint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    div.innerHTML = `<input type="text" value="${complaint}" readonly><button class="remove-btn" onclick="removeItem('${div.id}')"><i class="fas fa-trash"></i></button>`;
-    document.getElementById('complaintsList').appendChild(div);
-  });
-}
-
-let medicalHistoryCount = 0, surgicalHistoryCount = 0, drugHistoryCount = 0, allergyHistoryCount = 0, familyHistoryCount = 0, reportsCount = 0;
-
-function populateMedicalHistory(items) {
-  items.forEach(item => addMedicalHistoryItem(item.disease, item.details));
-}
-
-function addMedicalHistoryItem(disease, details) {
-  medicalHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `medical${medicalHistoryCount}`;
-  div.innerHTML = `<input type="text" value="${disease || ''}" required><input type="text" value="${details || ''}" required><button class="remove-btn" onclick="removeItem('medical${medicalHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('medicalHistoryList').appendChild(div);
-}
-
-function populateSurgicalHistory(items) {
-  items.forEach(item => addSurgicalHistoryItem(item.surgery, item.details));
-}
-
-function addSurgicalHistoryItem(surgery, details) {
-  surgicalHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `surgical${surgicalHistoryCount}`;
-  div.innerHTML = `<input type="text" value="${surgery || ''}" required><input type="text" value="${details || ''}" required><button class="remove-btn" onclick="removeItem('surgical${surgicalHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('surgicalHistoryList').appendChild(div);
-}
-
-function populateDrugHistory(items) {
-  items.forEach(item => addDrugHistoryItem(item.medication, item.details));
-}
-
-function addDrugHistoryItem(medication, details) {
-  drugHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `drug${drugHistoryCount}`;
-  div.innerHTML = `<input type="text" value="${medication || ''}" required><input type="text" value="${details || ''}" required><button class="remove-btn" onclick="removeItem('drug${drugHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('drugHistoryList').appendChild(div);
-}
-
-function populateAllergyHistory(items) {
-  items.forEach(item => addAllergyHistoryItem(item.allergen, item.details));
-}
-
-function addAllergyHistoryItem(allergen, details) {
-  allergyHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `allergy${allergyHistoryCount}`;
-  div.innerHTML = `<input type="text" value="${allergen || ''}" required><input type="text" value="${details || ''}" required><button class="remove-btn" onclick="removeItem('allergy${allergyHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('allergyHistoryList').appendChild(div);
-}
-
-function populateFamilyHistory(items) {
-  items.forEach(item => addFamilyHistoryItem(item.disease, item.relation));
-}
-
-function addFamilyHistoryItem(disease, relation) {
-  familyHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `family${familyHistoryCount}`;
-  div.innerHTML = `
-    <input type="text" value="${disease || ''}" required>
-    <select required>
-      <option value="">درجة القرابة</option>
-      <option value="أب" ${relation === 'أب' ? 'selected' : ''}>أب</option>
-      <option value="أم" ${relation === 'أم' ? 'selected' : ''}>أم</option>
-      <option value="أخ" ${relation === 'أخ' ? 'selected' : ''}>أخ</option>
-      <option value="أخت" ${relation === 'أخت' ? 'selected' : ''}>أخت</option>
-      <option value="أخرى" ${relation === 'أخرى' ? 'selected' : ''}>أخرى</option>
-    </select>
-    <button class="remove-btn" onclick="removeItem('family${familyHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('familyHistoryList').appendChild(div);
-}
-
-function populateReports(items) {
-  items.forEach(item => addReportItem(item.type, item.results, item.date));
-}
-
-function addReportItem(type, results, date) {
-  reportsCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `report${reportsCount}`;
-  div.innerHTML = `<input type="text" value="${type || ''}" required><textarea>${results || ''}</textarea><input type="date" value="${date || ''}"><button class="remove-btn" onclick="removeItem('report${reportsCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('reportsList').appendChild(div);
-}
-
-// deleteDiagnosis
-async function deleteDiagnosis(key) {
-  console.log('حذف الكي:', key);
-  try {
-    if (typeof puter !== 'undefined' && puter.kv) {
-      await puter.kv.del(key);
-      console.log('تم الحذف');
-      openHistoryModal(); // إعادة تحميل
-      alert('تم الحذف بنجاح!');
-    } else {
-      alert('Puter غير متاحة للحذف.');
-    }
-  } catch (error) {
-    console.error('خطأ في del():', error);
-    alert('خطأ في الحذف: ' + error.message);
-  }
-}
-
-// Conditionals
-function toggleChildren() {
-  const status = document.getElementById('maritalStatus').value;
-  document.getElementById('childrenField').style.display = (status !== 'أعزب') ? 'block' : 'none';
-}
-
-function toggleVitalsSection() {
-  const optIn = document.getElementById('vitalsOptIn').value;
-  document.getElementById('vitalsSection').style.display = (optIn === 'نعم') ? 'block' : 'none';
-}
-
-function toggleHabitDetails(detailsId) {
-  const selectId = detailsId.replace('Details', '');
-  const value = document.getElementById(selectId)?.value || '';
-  const detailsEl = document.getElementById(detailsId);
-  if (detailsEl) detailsEl.style.display = (value !== 'لا') ? 'block' : 'none';
-}
-
-function calculateBMI() {
-  const weight = parseFloat(document.getElementById('weight')?.value || 0);
-  const height = parseFloat(document.getElementById('height')?.value || 0) / 100;
-  const bmiField = document.getElementById('bmi');
-  if (weight > 0 && height > 0) {
-    bmiField.value = (weight / (height * height)).toFixed(2);
-  } else {
-    bmiField.value = '';
-  }
-}
-
-// قوائم ديناميكية (add*)
-function addMedicalHistory() {
-  medicalHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `medical${medicalHistoryCount}`;
-  div.innerHTML = `<input type="text" placeholder="اسم المرض" required><input type="text" placeholder="المدة/التفاصيل" required><button class="remove-btn" onclick="removeItem('medical${medicalHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('medicalHistoryList').appendChild(div);
-}
-
-function addSurgicalHistory() {
-  surgicalHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `surgical${surgicalHistoryCount}`;
-  div.innerHTML = `<input type="text" placeholder="اسم العملية الجراحية" required><input type="text" placeholder="التاريخ/التفاصيل" required><button class="remove-btn" onclick="removeItem('surgical${surgicalHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('surgicalHistoryList').appendChild(div);
-}
-
-function addDrugHistory() {
-  drugHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `drug${drugHistoryCount}`;
-  div.innerHTML = `<input type="text" placeholder="اسم الدواء" required><input type="text" placeholder="الجرعة/المدة" required><button class="remove-btn" onclick="removeItem('drug${drugHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('drugHistoryList').appendChild(div);
-}
-
-function addAllergyHistory() {
-  allergyHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `allergy${allergyHistoryCount}`;
-  div.innerHTML = `<input type="text" placeholder="نوع التحسس" required><input type="text" placeholder="التفاعل/الأعراض" required><button class="remove-btn" onclick="removeItem('allergy${allergyHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('allergyHistoryList').appendChild(div);
-}
-
-function addFamilyHistory() {
-  familyHistoryCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `family${familyHistoryCount}`;
-  div.innerHTML = `<input type="text" placeholder="اسم المرض العائلي" required><select required><option value="">درجة القرابة</option><option value="أب">أب</option><option value="أم">أم</option><option value="أخ">أخ</option><option value="أخت">أخت</option><option value="أخرى">أخرى</option></select><button class="remove-btn" onclick="removeItem('family${familyHistoryCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('familyHistoryList').appendChild(div);
-}
-
-function addReport() {
-  reportsCount++;
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `report${reportsCount}`;
-  div.innerHTML = `<input type="text" placeholder="نوع التقرير (مثال: تحليل دم)" required><textarea placeholder="النتائج الرئيسية" required></textarea><input type="date"><button class="remove-btn" onclick="removeItem('report${reportsCount}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('reportsList').appendChild(div);
-}
-
-function removeItem(id) {
-  const element = document.getElementById(id);
-  if (element) element.remove();
-}
-
-// نظام الموسوعة (symptomsData, openSymptomsLibrary, إلخ - كما هو)
-// symptomsData الكاملة للداخلية/الجراحة (50 عرضاً مقسمة على 6 فئات بالعربية - 8-9 أعراض لكل فئة)
-let symptomsData = {
-  // فئة الجهاز الهضمي (9 أعراض)
-  "الجهاز الهضمي": {
-    "ألم بطني": {
-      "description": "ألم في البطن، قد يشير إلى قرحة، التهاب زائدة، أو مشاكل هضمية. استشر فورًا إذا شديد.",
-      "questions": [
-        { "text": "موقع الألم؟", "type": "select", "options": ["الجانب الأيمن", "الجانب الأيسر", "الوسط", "منتشر"] },
-        { "text": "نوع الألم؟", "type": "select", "options": ["حاد", "مزمن", "نبضي", "حارق"] },
-        { "text": "شدة الألم (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["غثيان", "قيء", "إسهال", "إمساك", "حمى"] },
-        { "text": "ارتباط بالأكل؟", "type": "radio", "options": ["نعم", "لا", "غير معروف"] },
-        { "text": "مدة الألم؟", "type": "select", "options": ["ساعات", "أيام", "أسابيع"] },
-        { "text": "ملاحظات إضافية؟", "type": "textarea" }
-      ]
-    },
-    "قيء متكرر": {
-      "description": "قيء يستمر، قد يكون تسمم غذائي، انسداد، أو غثيان دوائي.",
-      "questions": [
-        { "text": "نوع القيء؟", "type": "select", "options": ["غذاء غير مهضوم", "ابيض", "دموي", "أصفر", "بني/اسود"] },
-        { "text": "عدد المرات يوميًا؟", "type": "number", "min": 1, "max": 20 },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["ألم بطن", "إسهال", "دوخة", "جفاف"] },
-        { "text": "ارتباط بأكل معين؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["يوم", "أيام", "أسابيع"] },
-        { "text": "أدوية حديثة؟", "type": "textarea" }
-      ]
-    },
-    "إسهال": {
-      "description": "إسهال متكرر، قد يشير إلى عدوى، تسمم غذائي، أو اضطرابات هضمية.",
-      "questions": [
-        { "text": "عدد المرات يوميًا؟", "type": "select", "options": ["1-3", "4-6", "أكثر من 6"] },
-        { "text": "شكل البراز؟", "type": "select", "options": ["سائل", "لزج", "دموي", "مخاطي"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["ألم بطن", "غثيان", "جفاف", "حمى"] },
-        { "text": "ارتباط بالطعام؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة الإسهال؟", "type": "select", "options": ["يوم واحد", "أيام", "أسابيع"] },
-        { "text": "سفر حديث؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "ملاحظات؟", "type": "textarea" }
-      ]
-    },
-    "إمساك": {
-      "description": "صعوبة في الإخراج، قد يكون عوضًا للإمساك أو مشاكل أمعاء.",
-      "questions": [
-        { "text": "عدد حركات الأمعاء أسبوعيًا؟", "type": "number", "min": 0, "max": 7 },
-        { "text": "جهد للإخراج؟", "type": "radio", "options": ["شديد", "معتدل", "لا"] },
-        { "text": "شكل البراز (1-7 بما يتعلق بالصلابة)؟", "type": "range", "min": 1, "max": 7, "step": 1 },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["ألم بطن", "انتفاخ", "دم في البراز"] },
-        { "text": "تغيير في النظام الغذائي؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أدوية (مسكنات، حديد)؟", "type": "textarea" }
-      ]
-    },
-    "انتفاخ البطن": {
-      "description": "انتفاخ أو غازات، قد يشير إلى عدم تحمل لكتوز أو IBS.",
-      "questions": [
-        { "text": "موقع الانتفاخ؟", "type": "select", "options": ["علوي", "أسفل", "منتشر"] },
-        { "text": "شدة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "ارتباط بالأكل؟", "type": "checkbox", "options": ["حليب", "فاصوليا", "مشروبات غازية"] },
-        { "text": "ألم مصاحب؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 30 }
-      ]
-    },
-    "صعوبة بلع": {
-      "description": "صعوبة في البلع، قد تكون مشاكل مريئية أو سرطانية.",
-      "questions": [
-        { "text": "نوع الصعوبة؟", "type": "select", "options": ["صلبيات (لحم)", "سوائل", "كلا"] },
-        { "text": "موقع الانسداد؟", "type": "select", "options": ["رقبة", "صدر", "لا يمر"] },
-        { "text": "ألم عند البلع؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "فقدان وزن؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "تاريخ حموضة؟", "type": "textarea" }
-      ]
-    },
-    "نزيف معدي": {
-      "description": "نزيف من الجهاز الهضمي، عاجل – قد يكون قرحة أو دوالي.",
-      "questions": [
-        { "text": "نوع النزيف؟", "type": "select", "options": ["قيء دموي", "براز أسود", "دم أحمر"] },
-        { "text": "كمية تقريبية؟", "type": "select", "options": ["قليل", "متوسط", "غزير"] },
-        { "text": "ألم بطني؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "دوخة أو إرهاق؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "أدوية مضادة للتخثر؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "سابق قرحة؟", "type": "textarea" }
-      ]
-    },
-    "فقدان وزن غير مبرر": {
-      "description": "فقدان وزن مفاجئ، قد يشير إلى سرطان أو فرط نشاط الغدة.",
-      "questions": [
-        { "text": "كمية الفقدان (كغ) في 6 أشهر؟", "type": "number", "min": 0, "max": 50 },
-        { "text": "تغيير في الشهية؟", "type": "select", "options": ["زيادة", "نقصان", "طبيعي"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["إرهاق", "عرق ليلي", "حمى"] },
-        { "text": "ارتباط بتغيير نظام؟", "type": "radio", "options": ["نعم", "لا"] },
+      try {
+        const fileExtension = uploadedFile.name.split('.').pop();
         
-        { "text": "ملاحظات؟", "type": "textarea" }
-      ]
-    },
-    "ألم في الجانب الأيمن العلوي": {
-      "description": "ألم تحت القفص الصدري، قد يكون مشاكل كبد أو مرارة.",
-      "questions": [
-        { "text": "نوع الألم؟", "type": "select", "options": ["موجي", "مستمر", "حاد"] },
-        { "text": "ارتباط بأكل دهني؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أصفرار في الجلد؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "حمى؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 365 }
-      ]
-    }
-  },
+            const prompt = `
+You are a highly skilled medical imaging expert with extensive experience in radiology, diagnostic imaging, and clinical interpretation.
 
-  // فئة الجهاز القلبي الوعائي (8 أعراض)
-  "الجهاز القلبي الوعائي": {
-    "ألم صدري": {
-      "description": "ألم في الصدر، قد يشير إلى ذبحة صدرية أو مشكلة عضلية. عاجل إذا مع تعرق.",
-      "questions": [
-        { "text": "موقع الألم؟", "type": "select", "options": ["وسط الصدر", "يسار", "يمين", "منتشر"] },
-        { "text": "نوع الألم؟", "type": "select", "options": ["ضغط", "حرقة", "طعن"] },
-        { "text": "مدة؟", "type": "select", "options": ["دقائق", "ساعات", "أيام"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["تعرق", "غثيان", "ضيق تنفس", "ألم ذراع"] },
-        { "text": "ارتباط بالجهد؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "شدة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "سابق أمراض قلب؟", "type": "textarea" }
-      ]
-    },
-    "ضيق تنفس": {
-      "description": "صعوبة في التنفس، قد تكون فشل قلبي أو رئوي.",
-      "questions": [
-        { "text": "عند الراحة أم الجهد؟", "type": "select", "options": ["راحة", "جهد", "كلا"] },
-        { "text": "تردد التنفس؟", "type": "number", "min": 10, "max": 40 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تورم ساقين", "سعال ليلي", "تعب"] },
-        { "text": "ارتباط باستلقاء؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "ضغط مرتفع؟", "type": "textarea" }
-      ]
-    },
-    "خفقان قلب": {
-      "description": "ضربات قلب سريعة، قد يكون arrhythmia أو توتر.",
-      "questions": [
-        { "text": "تردد الخفقان (بالدقيقة)؟", "type": "number", "min": 60, "max": 200 },
-        { "text": "منتظم أم غير منتظم؟", "type": "select", "options": ["منتظم", "غير منتظم"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["دوخة", "ألم صدر", "تعرق"] },
-        { "text": "ارتباط بجهد أو كافيين؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة النوبة؟", "type": "select", "options": ["دقائق", "ساعات"] },
-        { "text": "تاريخ أدوية قلب؟", "type": "textarea" }
-      ]
-    },
-    "تورم في الساقين": {
-      "description": "وذمة، قد تكون فشل قلب أو كلى.",
-      "questions": [
-        { "text": "موقع التورم؟", "type": "select", "options": ["ساقين", "قدمين", "وجه"] },
-        { "text": "شدة؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ضيق تنفس", "تعب", "ألم"] },
-        { "text": "ارتباط بالوقوف؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 365 },
-        { "text": "دواء مضادات الالتهاب؟", "type": "textarea" }
-      ]
-    },
-    "دوخة أو إغماء": {
-      "description": "دوار، قد يكون انخفاض ضغط أو فقر دم.",
-      "questions": [
-        { "text": "نوع الدوخة؟", "type": "select", "options": ["دوران", "غشاوة", "فقدان توازن"] },
-        { "text": "ارتباط بوقوف مفاجئ؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["غثيان", "تعرق", "رؤية مشوشة"] },
-        { "text": "تردد (أسبوعيًا)؟", "type": "number", "min": 0, "max": 20 },
-        { "text": "ضغط منخفض سابق؟", "type": "textarea" }
-      ]
-    },
-    "تعب عام": {
-      "description": "إرهاق مستمر، قد يكون فقر دم أو مشاكل قلبية.",
-      "questions": [
-        { "text": "شدة التعب (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "ارتباط بالجهد؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["نقصان شهية", "فقدان وزن", "ضيق تنفس"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "تحاليل دم سابقة؟", "type": "textarea" }
-      ]
-    },
-    "ألم في الساقين أثناء المشي": {
-      "description": "ألم في الساق، قد يكون شقاق أو نقص تروية.",
-      "questions": [
-        { "text": "موقع الألم؟", "type": "select", "options": ["ساقين", "فخذين", "واحدة"] },
-        { "text": "نوع؟", "type": "select", "options": ["تشنجي", "حرق", "نبضي"] },
-        { "text": "يختفي مع الراحة؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مسافة المشي حتى الألم؟", "type": "number", "min": 0, "max": 1000 },
-        { "text": "تورم أو برودة؟", "type": "checkbox", "options": ["نعم", "لا"] }
-      ]
-    },
-    "ارتفاع ضغط الدم": {
-      "description": "ضغط مرتفع، قد يكون أساسي أو ثانوي.",
-      "questions": [
-        { "text": "قراءة الضغط الأخيرة؟", "type": "text", "placeholder": "مثال: 160/100" },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["صداع", "نزيف أنف", "رؤية مشوشة"] },
-        { "text": "مدة الاكتشاف؟", "type": "select", "options": ["سنوات", "شهور"] },
-        { "text": "علاج حالي؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "تاريخ عائلي؟", "type": "textarea" }
-      ]
-    }
-  },
+Analyze the uploaded medical image carefully and provide a structured and comprehensive diagnostic report **in Arabic**.
 
-  // فئة الجهاز التنفسي (8 أعراض)
-  "الجهاز التنفسي": {
-    "سعال مستمر": {
-      "description": "سعال يستمر، قد يشير إلى عدوى، حساسية، أو مشاكل رئوية.",
-      "questions": [
-        { "text": "نوع السعال؟", "type": "select", "options": ["جاف", "رطب مع بلغم", "دموي"] },
-        { "text": "مدة السعال؟", "type": "select", "options": ["أقل من أسبوع", "أسابيع", "شهور"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ضيق تنفس", "حمى", "ألم صدر", "تعب"] },
-        { "text": "ارتباط بالتدخين؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "شدة؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "تاريخ رئوي؟", "type": "textarea" }
-      ]
-    },
-    "ضيق تنفس": {
-      "description": "صعوبة في التنفس، قد تكون الربو أو الانسداد الرئوي.",
-      "questions": [
-        { "text": "عند الجهد أم الراحة؟", "type": "select", "options": ["جهد", "راحة", "ليلي"] },
-        { "text": "تردد التنفس؟", "type": "number", "min": 12, "max": 30 },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["سعال", "صفير", "ألم"] },
-        { "text": "ارتباط ببارد أو رياضة؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "تدخين سلبي؟", "type": "textarea" }
-      ]
-    },
-    "سيلان أنف مزمن": {
-      "description": "إفرازات أنفية مستمرة، قد تكون التهاب جيوب أو حساسية.",
-      "questions": [
-        { "text": "لون الإفرازات؟", "type": "select", "options": ["شفاف", "أصفر", "أخضر", "دموي"] },
-        { "text": "جانب واحد؟", "type": "radio", "options": ["نعم", "كلا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["عطس", "حكة", "صداع"] },
-        { "text": "ارتباط بغبار أو حيوانات؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 12 }
-      ]
-    },
-    "ألم صدري تنفسي": {
-      "description": "ألم يزداد مع التنفس، قد يكون التهاب غشاء رئوي.",
-      "questions": [
-        { "text": "نوع الألم؟", "type": "select", "options": ["حاد عند الشهيق", "مستمر", "طعن"] },
-        { "text": "موقع؟", "type": "select", "options": ["أمامي", "خلفي", "جانبي"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["سعال", "حمى", "ضيق تنفس"] },
-        { "text": "ارتباط بإصابة؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] }
-      ]
-    },
-    "صفير تنفسي": {
-      "description": "صوت صفير أثناء التنفس، شائع في الربو.",
-      "questions": [
-        { "text": "توقيت الصفير؟", "type": "select", "options": ["شهيق", "زفير", "كلا"] },
-        { "text": "شدة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ضيق تنفس", "سعال", "تعب"] },
-        { "text": "ارتباط بالحساسية؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "تردد النوبات؟", "type": "number", "min": 0, "max": 30 },
-        { "text": "علاج سابق؟", "type": "textarea" }
-      ]
-    },
-    "سعال ليلي": {
-      "description": "سعال يزداد ليلاً، قد يكون حموضة أو رئوي.",
-      "questions": [
-        { "text": "نوع السعال؟", "type": "select", "options": ["جافة", "رطبة"] },
-        { "text": "صدى أعراض أخرى؟", "type": "checkbox", "options": ["حموضة", "انسداد أنف", "حمى"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "ارتباط باستلقاء؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "تدخين؟", "type": "textarea" }
-      ]
-    },
-    "بلغم دموي": {
-      "description": "بلغم مع دم، عاجل – قد يكون سرطان رئة أو التهاب.",
-      "questions": [
-        { "text": "كمية الدم؟", "type": "select", "options": ["قطرات", "ملعقة", "غزير"] },
-        { "text": "لون البلغم؟", "type": "select", "options": ["وردي", "أحمر كامل"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["تعب", "فقدان وزن", "حمى"] },
-        { "text": "مدخن؟", "type": "radio", "options": ["حالي", "سابق", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 30 },
-        { "text": "فحوصات سابقة؟", "type": "textarea" }
-      ]
-    },
-    "عرق ليلي": {
-      "description": "تعرق غزير ليلاً، قد يكون عدوى أو سرطاني.",
-      "questions": [
-        { "text": "شدة التعرق؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "تردد (ليليًا)؟", "type": "number", "min": 1, "max": 7 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["حمى", "فقدان وزن", "سعال"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "عمر؟", "type": "number", "min": 18, "max": 100 }
-      ]
-    }
-  },
+Follow **exactly** this format and use these Arabic section headers **verbatim** (do not translate them):
 
-  // فئة الجهاز البولي (8 أعراض)
-  "الجهاز البولي": {
-    "ألم أثناء التبول": {
-      "description": "حرقان أو ألم في التبول، شائع في عدوى المسالك البولية.",
-      "questions": [
-        { "text": "نوع الألم؟", "type": "select", "options": ["حرقان", "ألم في الإحليل", "ألم في البطن"] },
-        { "text": "تردد التبول؟", "type": "select", "options": ["متكرر ليلاً", "نهارًا", "مستمر"] },
-        { "text": "بول غائم أو دموي؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["حمى", "قشعريرة", "ألم ظهر"] },
-        { "text": "ارتباط بالجماع؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "ملاحظات؟", "type": "textarea" }
-      ]
-    },
-    "تبول متكرر": {
-      "description": "حاجة متكررة للتبول، قد يكون سكري أو prostate.",
-      "questions": [
-        { "text": "عدد مرات ليلاً؟", "type": "number", "min": 0, "max": 10 },
-        { "text": "كمية البول في كل مرة؟", "type": "select", "options": ["قليل", "غزير"] },
-        { "text": "عطش مصاحب؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "ألم؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "عمر؟", "type": "number", "min": 18, "max": 100 },
-        { "text": "سابق سكري؟", "type": "textarea" }
-      ]
-    },
-    "دم في البول": {
-      "description": "بول دموي، عاجل – قد يكون حصى أو سرطان.",
-      "questions": [
-        { "text": "نوع الدم؟", "type": "select", "options": ["أحمر مرئي", "وردي", "غير مرئي"] },
-        { "text": "ارتباط بألم؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["حرقان", "تورم", "تعب"] },
-        { "text": "مدة؟", "type": "select", "options": ["مرتفع", "متقطع"] },
-        { "text": "فحوصات سابقة؟", "type": "textarea" }
-      ]
-    },
-    "ألم في الخاصرة": {
-      "description": "ألم جانبي، قد يكون حصى كلى أو عدوى.",
-      "questions": [
-        { "text": "موقع الألم؟", "type": "select", "options": ["يمين", "يسار", "كلا"] },
-        { "text": "نوع؟", "type": "select", "options": ["حاد كلوح", "موجي", "مستمر"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["غثيان", "قيء", "دم بول"] },
-        { "text": "يمتد للأسفل؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة النوبة؟", "type": "number", "min": 1, "max": 60 },
-        { "text": "سابق حصى؟", "type": "textarea" }
-      ]
-    },
-    "تورم في الوجه أو القدمين": {
-      "description": "وذمة، قد يكون فشل كلوي أو قلبي.",
-      "questions": [
-        { "text": "موقع التورم؟", "type": "select", "options": ["وجه", "قدمين", "يدين"] },
-        { "text": "يختفي صباحًا؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعب", "ضغط", "بول قليل"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "بروتين في بول سابق؟", "type": "textarea" }
-      ]
-    },
-    "بول رغوي": {
-      "description": "فقاعات في البول، قد يشير إلى بروتينوريا.",
-      "questions": [
-        { "text": "تردد الرغاوي؟", "type": "select", "options": ["دائم", "بعد أكل"] },
-        { "text": "تورم مصاحب؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعب", "غثيان"] },
-        { "text": "عمر؟", "type": "number", "min": 18, "max": 100 },
-        { "text": "فحص كلى سابق؟", "type": "textarea" }
-      ]
-    },
-    "عطش شديد": {
-      "description": "عطش مفرط، قد يكون سكري أو نقص ملح.",
-      "questions": [
-        { "text": "كمية السوائل يوميًا (لتر)؟", "type": "number", "min": 1, "max": 20 },
-        { "text": "تبول متكرر؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "جفاف فم؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "فقدان وزن؟", "type": "select", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "textarea" }
-      ]
-    },
-    "بول ليلي": {
-      "description": "استيقاظ للتبول، قد يكون prostate أو فشل قلبي.",
-      "questions": [
-        { "text": "عدد مرات ليلاً؟", "type": "number", "min": 0, "max": 10 },
-        { "text": "ضغط في المثانة؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "بول قليل أم غزير؟", "type": "select", "options": ["قليل", "غزير"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 12 }
-      ]
-    }
-  },
+مشاهدات:
+- Describe key radiological findings and notable observations in bullet points.
+- Mention any abnormal densities, shadows, opacities, masses, or anatomical deviations.
 
-  // فئة الجهاز العصبي (8 أعراض)
-  "الجهاز العصبي": {
-    "صداع شديد": {
-      "description": "صداع قوي، قد يكون توتري أو migrain أو ارتفاع ضغط.",
-      "questions": [
-        { "text": "موقع الصداع؟", "type": "select", "options": ["جبهة", "خلف العيون", "جانبي", "منتشر"] },
-        { "text": "نوع؟", "type": "select", "options": ["نبضي", "ضغط", "حاد"] },
-        { "text": "شدة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["غثيان", "قيء", "حساسية ضوء", "ضعف"] },
-        { "text": "ارتباط بتوتر؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة النوبة؟", "type": "select", "options": ["ساعات", "أيام"] },
-        { "text": "سابق migrain؟", "type": "textarea" }
-      ]
-    },
-    "دوخة": {
-      "description": "دوران أو عدم توازن، قد يكون labrynth أو ضغط.",
-      "questions": [
-        { "text": "نوع الدوخة؟", "type": "select", "options": ["دوران الغرفة", "غشاوة", "فقدان توازن"] },
-        { "text": "تردد؟", "type": "select", "options": ["يومي", "أسبوعي"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["قيء", "رؤية مزدوجة", "ضعف أطراف"] },
-        { "text": "ارتباط بوقوف؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة النوبة؟", "type": "number", "min": 1, "max": 60 },
-        { "text": "أدوية؟", "type": "textarea" }
-      ]
-    },
-    "ضعف عضلي": {
-      "description": "ضعف في الأطراف، قد يكون سكتة أو نقص فيتامين.",
-      "questions": [
-        { "text": "موقع الضعف؟", "type": "select", "options": ["يمين", "يسار", "كلا الأطراف", "سفل"] },
-        { "text": "تدريجي أم مفاجئ؟", "type": "select", "options": ["تدريجي", "مفاجئ"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["خدر", "تشنج", "ألم"] },
-        { "text": "ارتباط بجهد؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "تحاليل سابقة؟", "type": "textarea" }
-      ]
-    },
-    "خدر أو وخز": {
-      "description": "إحساس خدر، قد يكون عصبي أو سكري.",
-      "questions": [
-        { "text": "موقع الخدر؟", "type": "select", "options": ["أصابع", "ساقين", "وجه"] },
-        { "text": "ثنائي الجانب؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["ضعف", "ألم", "دوخة"] },
-        { "text": "ارتباط بموقف نوم؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 365 }
-      ]
-    },
-    "تشنجات عضلية": {
-      "description": "تشنج، قد يكون نقص كالسيوم أو عصبي.",
-      "questions": [
-        { "text": "موقع التشنج؟", "type": "select", "options": ["ساقين", "يدين", "وجه"] },
-        { "text": "تردد يوميًا؟", "type": "number", "min": 0, "max": 20 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ألم", "ضعف", "دوخة"] },
-        { "text": "ارتباط بإرهاق؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "عمر؟", "type": "number", "min": 18, "max": 100 },
-        { "text": "فيتامينات؟", "type": "textarea" }
-      ]
-    },
-    "رعشة": {
-      "description": "رعشة في اليدين، قد تكون parkinson أو توتر.",
-      "questions": [
-        { "text": "نوع الرعشة؟", "type": "select", "options": ["راحة", "حركة", "وضعية"] },
-        { "text": "شدة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["بطء حركة", "تيبس", "مشي صعب"] },
-        { "text": "عمر البدء؟", "type": "number", "min": 20, "max": 80 },
-        { "text": "دواء (levodopa)؟", "type": "textarea" }
-      ]
-    },
-    "فقدان ذاكرة": {
-      "description": "نسيان قصير المدى، قد يكون alzheimer أو اكتئاب.",
-      "questions": [
-        { "text": "نوع الفقدان؟", "type": "select", "options": ["أسماء", "أحداث يومية", "طويل"] },
-        { "text": "تدريجي؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ارتباك", "قلق", "اكتئاب"] },
-        { "text": "تأثير على الحياة اليومية؟", "type": "radio", "options": ["كبير", "قليل"] },
-        { "text": "عمر؟", "type": "number", "min": 50, "max": 100 }
-      ]
-    },
-    "صعوبة في النوم": {
-      "description": "أرق، قد يكون توتر أو depression.",
-      "questions": [
-        { "text": "نوع الأرق؟", "type": "select", "options": ["صعوبة نوم", "استيقاظ ليلاً", "نوم قصير"] },
-        { "text": "ساعات نوم يوميًا؟", "type": "number", "min": 0, "max": 12 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعب نهاري", "قلق", "ألم"] },
-        { "text": "ارتباط بتوتر؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أسابيع", "شهور"] },
-        { "text": "كافيين؟", "type": "textarea" }
-      ]
-    }
-  },
+تشخيصات تفريقية:
+- List possible differential diagnoses in bullet points.
+- Include a short justification for each and a confidence level (High / Moderate / Low).
+- Keep this section header written **exactly** as “تشخيصات تفريقية:” in Arabic.
 
-  // فئة جراحية عامة (8 أعراض)
-  "جراحية عامة": {
-    "كتلة في الثدي أو الخصية": {
-      "description": "كتلة ملموسة، قد تكون حميدة أو خبيثة. فحص عاجل.",
-      "questions": [
-        { "text": "حجم الكتلة (سم)؟", "type": "number", "min": 0, "max": 10 },
-        { "text": "موقع؟", "type": "select", "options": ["ثدي يمين", "ثدي يسار", "خصية يمين", "خصية يسار"] },
-        { "text": "ثابتة أم متحركة؟", "type": "radio", "options": ["ثابتة", "متحركة"] },
-        { "text": "ألم؟", "type": "select", "options": ["نعم", "لا"] },
-        { "text": "تغييرات جلدية؟", "type": "checkbox", "options": ["احمرار", "تقشير"] },
-        
-        { "text": "فحص سابق؟", "type": "textarea" }
-      ]
-    },
-    "جروح غير متعافية": {
-      "description": "جرح يستمر، قد يكون عدوى أو سكري.",
-      "questions": [
-        { "text": "موقع الجرح؟", "type": "select", "options": ["ساق", "قدم", "يد"] },
-        { "text": "مدة عدم الشفاء (أسابيع)؟", "type": "number", "min": 1, "max": 52 },
-        { "text": "علامات عدوى؟", "type": "checkbox", "options": ["احمرار", "تورم", "صديد"] },
-        { "text": "ألم؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "سكري أو تدخين؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "علاج موضعي؟", "type": "textarea" }
-      ]
-    },
-    "ألم في الفتق": {
-      "description": "ألم مع انتفاخ، قد يكون فتق إربي.",
-      "questions": [
-        { "text": "موقع الانتفاخ؟", "type": "select", "options": ["إربي", "سري", "جراحي"] },
-        { "text": "يختفي عند الاستلقاء؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "ألم عند السعال؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "غثيان مصاحب؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "سابق جراحة؟", "type": "textarea" }
-      ]
-    },
-    "نزيف من الشرج": {
-      "description": "نزيف شرجي، قد يكون بواسير أو سرطان.",
-      "questions": [
-        { "text": "لون الدم؟", "type": "select", "options": ["أحمر فاتح", "أسود"] },
-        { "text": "ارتباط بإخراج؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "كمية؟", "type": "select", "options": ["قليل", "متوسط", "غزير"] },
-        { "text": "ألم أثناء الإخراج؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "تغيير في البراز؟", "type": "textarea" },
-    
-      ]
-    },
-    "ألم في الظهر السفلي": {
-      "description": "ألم عام، قد يكون عضلي أو قرصي أو كلوي.",
-      "questions": [
-        { "text": "نوع الألم؟", "type": "select", "options": ["حاد", "مزمن", "منتشر"] },
-        { "text": "يمتد للساق؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "ارتباط بجهد؟", "type": "checkbox", "options": ["رفع أثقال", "جلوس طويل"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["خدر ساق", "ضعف"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أشهر"] },
-        { "text": "إصابة سابقة؟", "type": "textarea" }
-      ]
-    },
-    "تورم في الخصية": {
-      "description": "تورم خصوي، قد يكون عدوى أو سرطان.",
-      "questions": [
-        { "text": "جانب واحد؟", "type": "radio", "options": ["نعم", "كلا"] },
-        { "text": "ألم؟", "type": "select", "options": ["شديد", "خفيف", "لا"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["حمى", "غثيان"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 30 },
-        { "text": "عمر <30؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "فحص سابق؟", "type": "textarea" }
-      ]
-    },
-    "ألم في الرقبة": {
-      "description": "ألم رقبة، قد يكون عضلي أو غدد ليمفاوية.",
-      "questions": [
-        { "text": "نوع الألم؟", "type": "select", "options": ["حاد", "مزمن", "مع صلابة"] },
-        { "text": "ارتباط بحركة رأس؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "تورم غدد؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "حمى أو سعال؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "إصابة؟", "type": "textarea" }
-      ]
-    },
-    "كسر أو إصابة": {
-      "description": "إصابة حديثة، قد تحتاج تثبيت أو جراحة.",
-      "questions": [
-        { "text": "موقع الإصابة؟", "type": "select", "options": ["ذراع", "ساق", "رأس"] },
-        { "text": "نوع؟", "type": "select", "options": ["كسر", "التواء", "جروح"] },
-        { "text": "ألم (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "تورم أو كدمات؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "حركة الجزء؟", "type": "select", "options": ["مستحيلة", "مؤلمة"] },
-        { "text": "وقت الإصابة؟", "type": "textarea" }
-      ]
-    }
-  },
+ملاحظات:
+- Provide any important notes, recommendations, or next diagnostic steps.
+- Summarize the interpretation in simple, patient-friendly Arabic.
 
-  // فئة الجهاز الغددي والجلدي (9 أعراض)
-  "الجهاز الغددي والجلدي": {
-    "تعرق غير طبيعي": {
-      "description": "تعرق زائد، قد يكون فرط نشاط درقية أو عدوى.",
-      "questions": [
-        { "text": "نوع التعرق؟", "type": "select", "options": ["ليلي", "نهاري", "عام"] },
-        { "text": "شدة؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعب", "فقدان وزن", "حمى"] },
-        { "text": "ارتباط بتوتر؟", "type": "radio", "options": ["جزئيًا", "لا"] },
-        { "text": "عمر البدء؟", "type": "number", "min": 10, "max": 60 },
-        { "text": "فحص درقية؟", "type": "textarea" }
-      ]
-    },
-    "جفاف الجلد": {
-      "description": "جلد جاف، قد يكون نقص إستروجين أو سكري.",
-      "questions": [
-        { "text": "موقع الجفاف؟", "type": "select", "options": ["يدين", "وجه", "جسم كامل"] },
-        { "text": "حكة؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "شقوق أو نزيف؟", "type": "checkbox", "options": ["نعم", "لا"] },
-        { "text": "ارتباط بمناخ؟", "type": "select", "options": ["جاف", "رطب"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 12 },
-        { "text": "أدوية؟", "type": "textarea" }
-      ]
-    },
-    "طفح جلدي": {
-      "description": "بثور أو احمرار، قد يكون حساسية أو عدوى.",
-      "questions": [
-        { "text": "نوع الطفح؟", "type": "select", "options": ["بثور", "احمرار", "حكة"] },
-        { "text": "موقع؟", "type": "select", "options": ["وجه", "جذع", "أطراف"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["حمى", "ألم المفاصل", "حكة شديدة"] },
-        { "text": "ارتباط بدواء أو طعام؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "صورة الطفح؟", "type": "textarea" }
-      ]
-    },
-    "شعر زائد أو تساقط": {
-      "description": "تغييرات هرمونية، قد يكون PCOS أو هرمونات.",
-      "questions": [
-                { "text": "نوع التغيير؟", "type": "select", "options": ["شعر زائد (وجه/جسم)", "تساقط كثيف", "شعر خفيف"] },
-        { "text": "المناطق المتأثرة؟", "type": "checkbox", "options": ["وجه", "صدر", "ظهر", "رأس"] },
-        { "text": "ارتباط بدورة شهرية أو هرمونات؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "أعراض هرمونية أخرى؟", "type": "checkbox", "options": ["دورة غير منتظمة", "زيادة وزن", "حب شباب"] },
-        { "text": "عمر البدء؟", "type": "number", "min": 10, "max": 60 },
-        { "text": "علاج (هرموني)؟", "type": "textarea" }
-      ]
-    },
-    "تغييرات في الوزن": {
-      "description": "زيادة أو نقصان وزن مفاجئ، قد يكون فرط/نقص نشاط الغدة أو سكري.",
-      "questions": [
-        { "text": "نوع التغيير؟", "type": "select", "options": ["زيادة", "نقصان"] },
-        { "text": "كمية (كغ) في 6 أشهر؟", "type": "number", "min": -50, "max": 50 },
-        { "text": "ارتباط بشهية؟", "type": "select", "options": ["زيادة شهية", "نقصان", "طبيعي"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعرق", "إرهاق", "جفاف"] },
-        { "text": "عمر؟", "type": "number", "min": 18, "max": 80 },
-        { "text": "فحوصات هرمونية؟", "type": "textarea" }
-      ]
-    },
-    "حساسية في الجلد": {
-      "description": "احمرار أو حكة، شائعة في حساسية أو أكزيما.",
-      "questions": [
-        { "text": "نوع الحساسية؟", "type": "select", "options": ["طفح حكة", "احمرار", "تورم"] },
-        { "text": "محفزات؟", "type": "checkbox", "options": ["طعام", "دواء", "مادة كيميائية"] },
-        { "text": "شدة الحكة (1-10)؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "انتشار؟", "type": "select", "options": ["محلي", "منتشر"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 30 },
-        { "text": "سابق حساسية؟", "type": "textarea" }
-      ]
-    },
-    "أصفرار الجلد": {
-      "description": "يرقان، قد يكون مشاكل كبد أو انسداد صفراوي.",
-      "questions": [
-        { "text": "أصفرار في العيون أيضًا؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "بول أصفر أم براز فاتح؟", "type": "checkbox", "options": ["بول أصفر", "براز فاتح"] },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["ألم بطن", "تعب", "غثيان"] },
-        { "text": "كحول أو أدوية كبد؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "select", "options": ["أيام", "أسابيع"] },
-        { "text": "فحص كبد؟", "type": "textarea" }
-      ]
-    },
-    "فرط التنمل": {
-      "description": "تنمل جلدي، قد يكون حساسية أو عصبي.",
-      "questions": [
-        { "text": "موقع؟", "type": "select", "options": ["جسم", "وجه", "أطراف"] },
-        { "text": "محفزات؟", "type": "checkbox", "options": ["حرارة", "بارد", "ضغط"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["حكة", "احمرار"] },
-        { "text": "مدة النوبة؟", "type": "number", "min": 1, "max": 60 },
-        { "text": "تكرار؟", "type": "select", "options": ["يومي", "أسبوعي"] }
-      ]
-    },
-    "جروح بطيئة الشفاء": {
-      "description": "شفاء بطيء، شائع في سكري أو نقص فيتامين.",
-      "questions": [
-        { "text": "موقع الجروح؟", "type": "select", "options": ["قدمين", "يدين", "فم"] },
-        { "text": "مدة الشفاء (أسابيع)؟", "type": "number", "min": 1, "max": 52 },
-        { "text": "علامات عدوى؟", "type": "checkbox", "options": ["احمرار", "صديد"] },
-        { "text": "سكري أو تدخين؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "نظام غذائي؟", "type": "textarea" }
-      ]
-    },
-    "تغيرات في الشعر أو الأظافر": {
-      "description": "تساقط أو هشاشة، قد يكون نقص تغذية أو هرموني.",
-      "questions": [
-        { "text": "نوع التغيير؟", "type": "select", "options": ["تساقط شعر", "هشاشة أظافر", "كلا"] },
-        { "text": "شدة؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "أعراض أخرى؟", "type": "checkbox", "options": ["تعب", "جلد جاف"] },
-        { "text": "ارتباط بنظام غذائي؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "مدة؟", "type": "number", "min": 1, "max": 12 },
-        { "text": "فيتامينات؟", "type": "textarea" }
-      ]
-    },
-    "عرق بارد": {
-      "description": "تعرق بارد مفاجئ، قد يكون صدمة أو قلق.",
-      "questions": [
-        { "text": "توقيت؟", "type": "select", "options": ["ليلي", "نهاري", "مع حمى"] },
-        { "text": "أعراض مصاحبة؟", "type": "checkbox", "options": ["رعشة", "تعب", "غثيان"] },
-        { "text": "شدة؟", "type": "range", "min": 1, "max": 10, "step": 1 },
-        { "text": "ارتباط بتوتر؟", "type": "radio", "options": ["نعم", "لا"] },
-        { "text": "تردد؟", "type": "number", "min": 1, "max": 7 }
-      ]
-    }
-  }
-};
+Additional context for the analysis:
+- Exam type: ${examType}
+- Reason for exam: ${reason}
+- Age: ${age}
+- Gender: ${gender}
+- History/symptoms: ${history || 'لا يوجد'}
 
-// تحديث loadSymptomsList لدعم الفئات بالعربية (عرض كعناوين مع الأعراض تحتها)
+Formatting instructions:
+- Use Arabic for all report content.
+- Keep section titles exactly as shown: "مشاهدات:", "تشخيصات تفريقية:", "ملاحظات:".
+- Present information as clear bullet points (use “-” for each line).
+- Avoid Markdown symbols (#, **, etc.).
+- Be concise, accurate, and medically sound.
+`;
 
+            
+let allResults = "";
+for (const file of uploadedFiles) {
+  const result = await analyzeWithGemini(file, prompt);
+  allResults += `
 
-let currentSymptom = '';
-let questionAnswers = {};
-
-function openSymptomsLibrary() {
-  document.getElementById('symptomsModal').style.display = 'block';
-  loadSymptomsList();
+📸 تحليل الصورة: ${file.name}
+${result}`;
 }
+const text = allResults;
 
-function closeSymptomsModal() {
-  document.getElementById('symptomsModal').style.display = 'none';
-}
-
-function loadSymptomsList() {
-  const symptomsList = document.getElementById('symptomsList');
-  symptomsList.innerHTML = '';
-  let count = 0;
-  Object.keys(symptomsData).forEach(category => {
-    count += Object.keys(symptomsData[category]).length; // حساب العدد الكلي
-    const categoryDiv = document.createElement('div');
-    categoryDiv.className = 'symptom-item';
-    categoryDiv.innerHTML = `<h4 style="color: var(--primary-blue); margin-bottom: 5px;"><i class="fas fa-folder-open"></i> ${category}</h4><div class="sub-symptoms"></div>`;
-    const subContainer = categoryDiv.querySelector('.sub-symptoms');
-    Object.keys(symptomsData[category]).forEach(symptom => {
-      const subItem = document.createElement('div');
-      subItem.style = 'padding: 8px 15px; background: rgba(0,0,0,0.02); border-radius: 6px; margin: 5px 0; cursor: pointer; transition: background 0.3s;';
-      subItem.innerHTML = `<strong>${symptom}</strong><br><small style="color: var(--secondary-text);">${symptomsData[category][symptom].description}</small>`;
-      subItem.onclick = (e) => { e.stopPropagation(); selectSymptom(symptom); };
-      subContainer.appendChild(subItem);
-      subItem.onmouseover = () => subItem.style.background = 'rgba(30,136,229,0.1)';
-      subItem.onmouseout = () => subItem.style.background = 'rgba(0,0,0,0.02)';
-    });
-    categoryDiv.onclick = (e) => { if (e.target.tagName !== 'DIV' && e.target.tagName !== 'STRONG' && e.target.tagName !== 'SMALL') { /* لا شيء، فقط الأعراض */ } };
-    symptomsList.appendChild(categoryDiv);
-  });
-  document.getElementById('symptomsCount').textContent = count;
-}
-
-function filterSymptoms() {
-  const searchTerm = document.getElementById('symptomSearch').value.toLowerCase();
-  const categoryItems = document.querySelectorAll('#symptomsList .symptom-item');
-  let visibleCount = 0;
-  categoryItems.forEach(category => {
-    const subItems = category.querySelectorAll('.sub-symptoms > div');
-    let categoryHasMatch = false;
-    subItems.forEach(subItem => {
-      const text = subItem.textContent.toLowerCase();
-      if (text.includes(searchTerm)) {
-        subItem.style.display = 'block';
-        categoryHasMatch = true;
-        visibleCount++;
-      } else {
-        subItem.style.display = 'none';
+            document.getElementById('card-findings').innerHTML =
+              "<h3><i class='fas fa-eye'></i> المشاهدات</h3>" +
+              extractSection(text, "مشاهدات");
+            document.getElementById('card-differential').innerHTML =
+              "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
+              extractSection(text, "تشخيصات تفريقية");
+            incrementReportCount();
+            
+      } catch (err) {
+        document.getElementById('card-findings').innerHTML = `<h3><i class='fas fa-exclamation-triangle'></i> خطأ</h3><p><strong><i class='fas fa-times'></i> ${err.message}</strong></p>`;
+        document.getElementById('card-differential').innerHTML = '';
       }
+      analyzeBtn.innerHTML = '<i class="fas fa-play-circle"></i> بدء التحليل';
+      analyzeBtn.disabled = false;
     });
-    category.style.display = categoryHasMatch ? 'block' : 'none';
-  });
-  if (searchTerm === '') {
-    // إظهار الكل إذا فارغ
-    document.querySelectorAll('#symptomsList .sub-symptoms > div').forEach(item => item.style.display = 'block');
-    document.querySelectorAll('#symptomsList .symptom-item').forEach(cat => cat.style.display = 'block');
-    visibleCount = Object.keys(symptomsData).reduce((total, cat) => total + Object.keys(symptomsData[cat]).length, 0);
-  }
-  document.getElementById('symptomsCount').textContent = visibleCount || 0;
-}
 
-function selectSymptom(symptomName) {
-  let found = false;
-  let symptomData = null;
-  
-  // البحث في جميع الفئات
-  Object.keys(symptomsData).forEach(category => {
-    if (symptomsData[category] && symptomsData[category][symptomName]) {
-      symptomData = symptomsData[category][symptomName];
-      found = true;
-      return; // وقف البحث بعد العثور
-    }
-  });
-  
-  if (found && symptomData) {
-    openSymptomQuestions(symptomName, symptomData);
-  } else {
-    alert('العرض غير موجود. يرجى البحث مرة أخرى.');
-  }
-  
-  closeSymptomsModal();
-}
-function openSymptomQuestions(symptomName, symptomData) {
-  currentSymptom = symptomName;
-  questionAnswers = {};
-  const modal = document.getElementById('questionsModal');
-  
-  document.getElementById('symptomTitle').textContent = symptomName;
-  document.getElementById('symptomDescription').textContent = symptomData.description;
-  createQuestions(symptomData.questions);
-  modal.style.display = 'block';
-}
-
-function createQuestions(questions) {
-  const container = document.getElementById('questionsContainer');
-  container.innerHTML = '';
-  questions.forEach((question, index) => {
-    const questionDiv = document.createElement('div');
-    questionDiv.className = 'question-item';
-    questionDiv.innerHTML = `<h4>${question.text}</h4>${createQuestionInput(question, index)}`;
-    container.appendChild(questionDiv);
-  });
-}
-
-function createQuestionInput(question, index) {
-  switch (question.type) {
-    case 'select':
-      return `<select class="question-input" onchange="saveAnswer(${index}, this.value)"><option value="">اختر</option>${question.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}</select>`;
-    case 'checkbox':
-      return `<div class="checkbox-group">${question.options.map(opt => `<label><input type="checkbox" onchange="saveCheckboxAnswer(${index}, '${opt.replace(/'/g, "\\'")}', this.checked)"> ${opt}</label>`).join('')}</div>`;
-    case 'radio':
-      return `<div class="radio-group">${question.options.map(opt => `<label><input type="radio" name="q${index}" onchange="saveAnswer(${index}, '${opt.replace(/'/g, "\\'")}')"> ${opt}</label>`).join('')}</div>`;
-    case 'range':
-      return `<input type="range" class="question-input" min="${question.min}" max="${question.max}" step="${question.step}" oninput="document.getElementById('rangeValue${index}').textContent = this.value; saveAnswer(${index}, this.value)"><div class="range-container"><span id="rangeValue${index}" class="range-value">${question.min}</span></div>`;
-    case 'textarea':
-      return `<textarea class="question-input" onchange="saveAnswer(${index}, this.value)"></textarea>`;
-    default:
-      return `<input type="text" class="question-input" onchange="saveAnswer(${index}, this.value)">`;
-  }
-}
-
-function saveAnswer(index, value) {
-  questionAnswers[index] = value;
-}
-
-function saveCheckboxAnswer(index, option, isChecked) {
-  if (!questionAnswers[index]) questionAnswers[index] = [];
-  if (isChecked) {
-    if (!questionAnswers[index].includes(option)) questionAnswers[index].push(option);
-  } else {
-    questionAnswers[index] = questionAnswers[index].filter(item => item !== option);
-  }
-}
-
-function closeQuestionsModal() {
-  document.getElementById('questionsModal').style.display = 'none';
-}
-
-function addSymptomWithAnswers() {
-  if (Object.keys(questionAnswers).length === 0) {
-    alert('يرجى الإجابة على الأسئلة.');
-    return;
-  }
-  
-  // البحث عن بيانات العرض الحالي
-  let symptomData = null;
-  Object.keys(symptomsData).forEach(category => {
-    if (symptomsData[category] && symptomsData[category][currentSymptom]) {
-      symptomData = symptomsData[category][currentSymptom];
-    }
-  });
-  
-  const div = document.createElement('div');
-  div.className = 'list-item';
-  div.id = `complaint_${Date.now()}`;
-  
-  let summary = currentSymptom;
-  const answers = Object.values(questionAnswers).filter(v => v);
-  
-  if (answers.length > 0) {
-    summary += ": ";
-    answers.forEach((answer, idx) => {
-      if (symptomData && symptomData.questions[idx]) {
-        const questionText = symptomData.questions[idx].text.replace('؟', '').trim();
-        summary += `${questionText}: ${answer}، `;
+    function extractSection(text, section) {
+      const regex = new RegExp(`${section}:[\\s\\S]*?(?=(مشاهدات:|تشخيصات تفريقية:|ملاحظات:|$))`, "i");
+      const match = text.match(regex);
+      if (match) {
+        return formatAsList(match[0].replace(`${section}:`, "").trim());
       }
-    });
-    summary = summary.slice(0, -2);
-  }
-  
-  div.innerHTML = `<input type="text" value="${summary}" readonly><button class="remove-btn" onclick="removeItem('${div.id}')"><i class="fas fa-trash"></i></button>`;
-  document.getElementById('complaintsList').appendChild(div);
-  closeQuestionsModal();
-  alert(`تم إضافة "${currentSymptom}" إلى الشكايات.`);
-}
-
-// window.onclick للإغلاق
-window.onclick = function(event) {
-  if (event.target.id === 'symptomsModal') closeSymptomsModal();
-  if (event.target.id === 'questionsModal') closeQuestionsModal();
-  if (event.target.id === 'historyModal') closeHistoryModal();
-};
-
-// collectFormData
-function collectFormData() {
-  return {
-    fullName: document.getElementById('fullName')?.value || '',
-    gender: document.getElementById('gender')?.value || '',
-    age: document.getElementById('age')?.value || '',
-    maritalStatus: document.getElementById('maritalStatus')?.value || '',
-    childrenCount: document.getElementById('childrenCount')?.value || '',
-    address: document.getElementById('address')?.value || '',
-    occupation: document.getElementById('occupation')?.value || '',
-    vitalsOptIn: document.getElementById('vitalsOptIn')?.value || '',
-    bloodPressure: document.getElementById('bloodPressure')?.value || '',
-    pulse: document.getElementById('pulse')?.value || '',
-    temperature: document.getElementById('temperature')?.value || '',
-    respiratoryRate: document.getElementById('respiratoryRate')?.value || '',
-    weight: document.getElementById('weight')?.value || '',
-    height: document.getElementById('height')?.value || '',
-    bmi: document.getElementById('bmi')?.value || '',
-    smoking: document.getElementById('smoking')?.value || '',
-    smokingQuantity: document.getElementById('smokingQuantity')?.value || '',
-    alcohol: document.getElementById('alcohol')?.value || '',
-    alcoholQuantity: document.getElementById('alcoholQuantity')?.value || '',
-    drugs: document.getElementById('drugs')?.value || '',
-    drugsQuantity: document.getElementById('drugsQuantity')?.value || ''
-  };
-}
-
-// collectFormSummary و generateSummary
-function collectFormSummary(forDisplay = false) {
-  const data = collectFormData();
-  let summary = '';
-  if (forDisplay) {
-    summary = '<h3>ملخص القصة السريرية:</h3>';
-    summary += `<p><strong>الاسم:</strong> ${data.fullName}, <strong>الجنس:</strong> ${data.gender}, <strong>العمر:</strong> ${data.age}</p>`;
-    if (data.maritalStatus || data.childrenCount) {
-      summary += `<p><strong>الحالة الاجتماعية:</strong> ${data.maritalStatus}`;
-      if (data.childrenCount) summary += `, <strong>عدد الأولاد:</strong> ${data.childrenCount}`;
-      summary += '</p>';
-    }
-    if (data.address) summary += `<p><strong>عنوان السكن:</strong> ${data.address}</p>`;
-    if (data.occupation) summary += `<p><strong>المهنة:</strong> ${data.occupation}</p>`;
-  } else {
-    summary = `الاسم: ${data.fullName}, الجنس: ${data.gender}, العمر: ${data.age}, الحالة الاجتماعية: ${data.maritalStatus}, العنوان: ${data.address}, المهنة: ${data.occupation}`;
-  }
-  
-  if (data.smoking !== 'لا') summary += `, التدخين: ${data.smoking} ${data.smokingQuantity}`;
-  if (data.alcohol !== 'لا') summary += `, الكحول: ${data.alcohol} ${data.alcoholQuantity}`;
-  if (data.drugs !== 'لا') summary += `, المخدرات: ${data.drugs} ${data.drugsQuantity}`;
-  
-  if (data.vitalsOptIn === 'نعم') {
-    let vitals = ', العلامات الحيوية: ';
-    if (data.bloodPressure) vitals += `ضغط ${data.bloodPressure}, `;
-    if (data.pulse) vitals += `نبض ${data.pulse}, `;
-    if (data.temperature) vitals += `حرارة ${data.temperature}, `;
-    if (data.respiratoryRate) vitals += `تنفس ${data.respiratoryRate}, `;
-    if (data.weight || data.height) vitals += `وزن ${data.weight}كغ, طول ${data.height}سم, BMI ${data.bmi}`;
-    summary += vitals;
-  }
-  
-  const complaints = Array.from(document.querySelectorAll('#complaintsList .list-item input')).map(input => input.value).filter(v => v).join('; ');
-  if (complaints) {
-    if (forDisplay) summary += `<p><strong>الشكايات الرئيسية:</strong> ${complaints}</p>`;
-    else summary += `, الشكايات: ${complaints}`;
-  }
-  
-  // السوابق (موجز)
-  const medicalInputs = document.querySelectorAll('#medicalHistoryList .list-item input');
-  let medical = '';
-  for (let i = 0; i < medicalInputs.length; i += 2) {
-    const disease = medicalInputs[i]?.value || '';
-    const details = medicalInputs[i+1]?.value || '';
-    if (disease) medical += `${disease} (${details}), `;
-  }
-  if (medical) {
-    medical = medical.slice(0, -2);
-    if (forDisplay) summary += `<p><strong>السوابق المرضية:</strong> ${medical}</p>`;
-    else summary += `, السوابق المرضية: ${medical}`;
-  }
-  
-  const surgicalInputs = document.querySelectorAll('#surgicalHistoryList .list-item input');
-  let surgical = '';
-  for (let i = 0; i < surgicalInputs.length; i += 2) {
-    const surgery = surgicalInputs[i]?.value || '';
-    const details = surgicalInputs[i+1]?.value || '';
-    if (surgery) surgical += `${surgery} (${details}), `;
-  }
-  if (surgical) {
-    surgical = surgical.slice(0, -2);
-    if (forDisplay) summary += `<p><strong>السوابق الجراحية:</strong> ${surgical}</p>`;
-    else summary += `, السوابق الجراحية: ${surgical}`;
-  }
-  
-  const drugInputs = document.querySelectorAll('#drugHistoryList .list-item input');
-  let drug = '';
-  for (let i = 0; i < drugInputs.length; i += 2) {
-    const med = drugInputs[i]?.value || '';
-    const details = drugInputs[i+1]?.value || '';
-    if (med) drug += `${med} (${details}), `;
-  }
-  if (drug) {
-    drug = drug.slice(0, -2);
-    if (forDisplay) summary += `<p><strong>السوابق الدوائية:</strong> ${drug}</p>`;
-    else summary += `, السوابق الدوائية: ${drug}`;
-  }
-  
-  const allergyInputs = document.querySelectorAll('#allergyHistoryList .list-item input');
-  let allergy = '';
-  for (let i = 0; i < allergyInputs.length; i += 2) {
-    const allerg = allergyInputs[i]?.value || '';
-    const details = allergyInputs[i+1]?.value || '';
-    if (allerg) allergy += `${allerg} (${details}), `;
-  }
-  if (allergy) {
-    allergy = allergy.slice(0, -2);
-    if (forDisplay) summary += `<p><strong>التحسسات:</strong> ${allergy}</p>`;
-    else summary += `, التحسسات: ${allergy}`;
-  }
-  
-  const familyInputs = document.querySelectorAll('#familyHistoryList .list-item input');
-  const familySelects = document.querySelectorAll('#familyHistoryList .list-item select');
-  let family = '';
-  for (let i = 0; i < familyInputs.length; i++) {
-    const famDisease = familyInputs[i]?.value || '';
-    const relation = familySelects[i]?.value || '';
-    if (famDisease) family += `${famDisease} (${relation}), `;
-  }
-  if (family) {
-    family = family.slice(0, -2);
-    if (forDisplay) summary += `<p><strong>السوابق العائلية:</strong> ${family}</p>`;
-    else summary += `, السوابق العائلية: ${family}`;
-  }
-  
-  const reportsInputs = document.querySelectorAll('#reportsList .list-item input');
-  let reports = Array.from(reportsInputs).map(input => input.value).filter(v => v).join('; ');
-  if (reports) {
-    if (forDisplay) summary += `<p><strong>التقارير الطبية:</strong> ${reports}</p>`;
-    else summary += `, التقارير: ${reports}`;
-  }
-
-  return summary;
-}
-
-function generateSummary() {
-  const summaryHtml = collectFormSummary(true);
-  document.getElementById('generatedSummary').innerHTML = summaryHtml;
-}
-
-// sendFormToAI
-async function sendFormToAI() {
-  if (!validateCurrentStep()) return;
-  // بعد ما يخلص التحليل بنجاح، روح لخطوة 9
-showStep(9);
-
-  const summary = collectFormSummary(false);
-  const prompt = `بناءً على هذه الملخص القصة السريرية للداخلية العامة أو الجراحة: ${summary}، قدم 3-5 تشخيصات تفريقية محتملة باللغة العربية، مع التركيز على الشكايات، السوابق، والعلامات الحيوية. أرجع JSON فقط: [{"diagnosis": "...", "reasons": "...", "recommendedTests": "...", "probability": "..."}]`;
-
-  try {
-    const resultsTable = document.getElementById('resultsTable');
-    resultsTable.innerHTML = `
-      <div style="text-align: center; padding: 40px; background: var(--card-bg); border-radius: var(--border-radius);">
-        <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary-blue); margin-bottom: 20px;"></i>
-        <h3>جاري التحليل...</h3>
-        <p>يتم معالجة بيانات القصة السريرية وتوليد التشخيصات التفريقية. هذا قد يستغرق بضع ثوانٍ.</p>
-      </div>
-    `;
-
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    let fullResponse = '';
-    let diagnoses = null;
-
-    if (typeof puter !== 'undefined' && puter.ai && puter.ai.chat) {
-      const resp = await puter.ai.chat(prompt, { model: 'claude', stream: true });
-      for await (const part of resp) {
-        fullResponse += part?.text || '';
-      }
-
-      const jsonMatch = fullResponse.match(/\[\s*\{[\s\S]*?\}\s*(?:,\s*\{[\s\S]*?\}\s*)*\]/);
-      if (jsonMatch) {
-        try {
-          diagnoses = JSON.parse(jsonMatch[0]);
-          if (!Array.isArray(diagnoses) || diagnoses.length === 0) throw new Error('JSON غير صالح');
-        } catch (e) {
-          console.error('خطأ في JSON:', e);
-          diagnoses = null;
-        }
-      }
+      return `<p><i class='fas fa-exclamation-triangle' style='color:var(--primary-blue);'></i> لم يتم العثور على ${section}</p>`;
     }
 
-    if (!diagnoses || diagnoses.length === 0) {
-      throw new Error('فشل في الحصول على التشخيصات.');
+    function formatAsList(text) {
+      const lines = text.split(/\n|-/).map(l => l.trim()).filter(l => l);
+      return "<ul style='text-align:right;'>" + lines.map(l => {
+        // دعم للثقة (High/Moderate/Low)
+        let confClass = '';
+        if (l.includes('High')) confClass = 'conf-high';
+        else if (l.includes('Moderate')) confClass = 'conf-moderate';
+        else if (l.includes('Low')) confClass = 'conf-low';
+        return `<li class="${confClass}"><i class='fas fa-check-circle' style='color:var(--icon-color); margin-left:0.5rem;'></i>${l}</li>`;
+      }).join("") + "</ul>";
     }
 
-    resultsTable.innerHTML = renderDiagnosesHtml(diagnoses);
-    analysisCompleted = true;
-    showStep(9);
-    document.getElementById('step9').scrollIntoView({ behavior: 'smooth' });
-    alert('تم الانتهاء من التحليل بنجاح!');
-  } catch (error) {
-    console.error('خطأ في sendFormToAI:', error);
-    const resultsTable = document.getElementById('resultsTable');
-    resultsTable.innerHTML = `
-      <div style="text-align: center; padding: 40px; color: red; background: var(--card-bg); border-radius: var(--border-radius);">
-        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-        <h3>حدث خطأ في التحليل</h3>
-        <p>${error.message}</p>
-        <button class="btn" onclick="sendFormToAI()">إعادة المحاولة</button>
-      </div>
-    `;
-    showStep(9);
-  }
-}
-
-
-// ===== Responsive rendering helpers: render table on desktop, cards on mobile =====
-function isMobile() {
-  return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
-}
-function escapeHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function renderDiagnosesHtml(diagnoses) {
-  if (!Array.isArray(diagnoses)) diagnoses = [];
-  if (isMobile()) {
-    let cards = '<div class=\"diagnosis-cards\">';
-    diagnoses.forEach(diag => {
-      const diagnosis = escapeHtml(diag.diagnosis || '');
-      const reasons = escapeHtml(diag.reasons || '');
-      const tests = escapeHtml(diag.recommendedTests || '');
-      const prob = escapeHtml(diag.probability || '');
-      cards += `<div class=\"diagnosis-card\" data-diagnosis=\"${diagnosis}\" data-reasons=\"${reasons}\" data-tests=\"${tests}\" data-probability=\"${prob}\">`;
-      cards += `<h3 class=\"card-title\">${diagnosis}</h3>`;
-      cards += `<div class=\"card-row\"><strong>الأسباب الرئيسية:</strong><div class=\"card-reasons\">${reasons}</div></div>`;
-      cards += `<div class=\"card-row\"><strong>الاستقصاءات المقترحة:</strong><div class=\"card-tests\">${tests}</div></div>`;
-      cards += `<div class=\"card-row\"><strong>الاحتمالية:</strong> <span class=\"card-prob\" style=\"font-weight:bold;color:var(--success-green);\">${prob}</span></div>`;
-      cards += `</div>`;
-    });
-    cards += '</div>';
-    return cards;
-  } else {
-    let tableHtml = `<table><thead><tr><th>التشخيص المحتمل</th><th>الأسباب الرئيسية</th><th>الاستقصاءات المقترحة</th><th>الاحتمالية</th></tr></thead><tbody>`;
-    diagnoses.forEach(diag => {
-      tableHtml += `<tr><td>${diag.diagnosis || ''}</td><td>${diag.reasons || ''}</td><td>${diag.recommendedTests || ''}</td><td style=\"font-weight: bold; color: var(--success-green);\">${diag.probability || ''}</td></tr>`;
-    });
-    tableHtml += '</tbody></table>';
-    return tableHtml;
-  }
-}
-// ===== end helpers =====
-
-// Dark Mode
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-}
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(prefersDark ? 'dark' : 'light');
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => applyTheme(e.matches ? 'dark' : 'light'));
-</script>
+    // نسخ التقرير (إصلاح للـ HTML، استخدم textContent للنص النقي)
+    document.getElementById('copyBtn').onclick = () => {
+      const meta = document.getElementById("card-meta").textContent;
+      const findings = document.getElementById("card-findings").textContent;
+      const diff = document.getElementById("card-differential").textContent;
+      const reportText = `${meta}\n\n${findings}\n\n${diff}`;
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert("تم النسخ بنجاح");
+      }).catch(() => {
+        alert("حدث خطأ في النسخ");
+      });
+    };
+  </script>
 <script>
 // دالة الثيم (انسخها في كل صفحة)
 function initTheme() {
