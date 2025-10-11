@@ -681,7 +681,7 @@ input, textarea, [contenteditable="true"] {
         new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve({ mime_type: file.type, data: reader.result.split(',')[1] });
-          reader.onerror = reject;
+          reader.onerror = () => reject(new Error('خطأ في قراءة الملف: ' + file.name));
           reader.readAsDataURL(file);
         })
       ));
@@ -706,16 +706,15 @@ input, textarea, [contenteditable="true"] {
         );
 
         const data = await response.json();
-        if (data?.candidates?.length) {
-          resolve(data.candidates[0].content.parts.map(p => p.text || "").join("\n"));
+        if (data?.candidates?.length && data.candidates[0]?.content?.parts) {
+          return data.candidates[0].content.parts.map(p => p.text || "").join("\n");
         } else {
-          reject(new Error("لم يتم الحصول على استجابة صالحة من السيرفر"));
+          throw new Error("لم يتم الحصول على استجابة صالحة من السيرفر: " + (data?.error?.message || 'خطأ غير معروف'));
         }
       } catch (err) {
-        reject(err);
+        throw err;
       }
     }
-
 
     // كود الـDark Mode التلقائي (كما في xray)
     function applyTheme(theme) {
@@ -955,7 +954,8 @@ Formatting instructions:
           extractSection(text, "مشاهدات");
         document.getElementById('card-differential').innerHTML =
           "<h3><i class='fas fa-stethoscope'></i> التشخيصات التفريقية</h3>" +
-          extractSection(text, "تشخيصات تفريقية");
+          extractSection(text, "تشخيصات تفريقية") +
+          extractSection(text, "ملاحظات"); // إضافة قسم الملاحظات إذا وجد
         incrementReportCount();
         
       } catch (err) {
